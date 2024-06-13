@@ -5,6 +5,7 @@ import Login from '../Login';
 import Register from '../Register';
 import Profile from '../Profile';
 import NotFound from '../NotFound';
+import Navbar from '../../Components/Navbar';
 import './App.css';
 
 const AppRoutes = () => {
@@ -24,6 +25,7 @@ function App() {
   return (
     <BrowserRouter>
       <AppRoutes />
+      <Navbar />
     </BrowserRouter>
   );
 }

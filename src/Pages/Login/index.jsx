@@ -1,7 +1,7 @@
-import React from 'react';
+import Layout from '../../Components/Layout';
 
 function Login() {
-  return <div>Login</div>;
+  return <Layout>Login</Layout>;
 }
 
 export default Login;

@@ -1,7 +1,7 @@
-import React from 'react';
+import Layout from '../../Components/Layout';
 
 function Profile() {
-  return <div>Profile</div>;
+  return <Layout>Profile</Layout>;
 }
 
 export default Profile;

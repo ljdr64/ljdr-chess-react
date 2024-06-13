@@ -1,7 +1,7 @@
-import React from 'react';
+import Layout from '../../Components/Layout';
 
 function ChessGame() {
-  return <div>ChessGame</div>;
+  return <Layout>ChessGame</Layout>;
 }
 
 export default ChessGame;

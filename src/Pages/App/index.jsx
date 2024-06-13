@@ -1,7 +1,31 @@
+import { useRoutes, BrowserRouter } from 'react-router-dom';
+import Home from '../Home';
+import ChessGame from '../ChessGame';
+import Login from '../Login';
+import Register from '../Register';
+import Profile from '../Profile';
+import NotFound from '../NotFound';
 import './App.css';
 
+const AppRoutes = () => {
+  let routes = useRoutes([
+    { path: '/', element: <Home /> },
+    { path: '/chess-game', element: <ChessGame /> },
+    { path: '/login', element: <Login /> },
+    { path: '/register', element: <Register /> },
+    { path: '/profile', element: <Profile /> },
+    { path: '/*', element: <NotFound /> },
+  ]);
+
+  return routes;
+};
+
 function App() {
-  return <div className="bg-blue-500">LJDR-Chess-React</div>;
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
 export default App;

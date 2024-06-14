@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Piece = ({ piece, onClick }) => {
   // Función para determinar el ID del símbolo basado en la pieza recibida
   const getSymbolId = (piece) => {

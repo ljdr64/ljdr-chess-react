@@ -1,4 +1,5 @@
 import { useRoutes, BrowserRouter } from 'react-router-dom';
+import { ChessBoardProvider } from '../../Context';
 import Home from '../Home';
 import ChessGame from '../ChessGame';
 import Login from '../Login';
@@ -23,10 +24,12 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-      <Navbar />
-    </BrowserRouter>
+    <ChessBoardProvider>
+      <BrowserRouter>
+        <AppRoutes />
+        <Navbar />
+      </BrowserRouter>
+    </ChessBoardProvider>
   );
 }
 

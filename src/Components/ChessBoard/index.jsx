@@ -1,94 +1,50 @@
 import { useState } from 'react';
+import { FENToBoard2DArray, updateFENPosition } from '../../utils';
 
 const ChessBoard = () => {
-  const initialBoardState = [
-    ['a1', 'R'],
-    ['b1', 'N'],
-    ['c1', 'B'],
-    ['d1', 'Q'],
-    ['e1', 'K'],
-    ['f1', 'B'],
-    ['g1', 'N'],
-    ['h1', 'R'], // Fila 1 (blancas)
-    ['a2', 'P'],
-    ['b2', 'P'],
-    ['c2', 'P'],
-    ['d2', 'P'],
-    ['e2', 'P'],
-    ['f2', 'P'],
-    ['g2', 'P'],
-    ['h2', 'P'], // Fila 2 (blancas)
-    ['a3', 'empty'],
-    ['b3', 'empty'],
-    ['c3', 'empty'],
-    ['d3', 'empty'],
-    ['e3', 'empty'],
-    ['f3', 'empty'],
-    ['g3', 'empty'],
-    ['h3', 'empty'], // Filas 3-6 (vacías)
-    ['a4', 'empty'],
-    ['b4', 'empty'],
-    ['c4', 'empty'],
-    ['d4', 'empty'],
-    ['e4', 'empty'],
-    ['f4', 'empty'],
-    ['g4', 'empty'],
-    ['h4', 'empty'],
-    ['a5', 'empty'],
-    ['b5', 'empty'],
-    ['c5', 'empty'],
-    ['d5', 'empty'],
-    ['e5', 'empty'],
-    ['f5', 'empty'],
-    ['g5', 'empty'],
-    ['h5', 'empty'],
-    ['a6', 'empty'],
-    ['b6', 'empty'],
-    ['c6', 'empty'],
-    ['d6', 'empty'],
-    ['e6', 'empty'],
-    ['f6', 'empty'],
-    ['g6', 'empty'],
-    ['h6', 'empty'],
-    ['a7', 'p'],
-    ['b7', 'p'],
-    ['c7', 'p'],
-    ['d7', 'p'],
-    ['e7', 'p'],
-    ['f7', 'p'],
-    ['g7', 'p'],
-    ['h7', 'p'], // Fila 7 (negras)
-    ['a8', 'r'],
-    ['b8', 'n'],
-    ['c8', 'b'],
-    ['d8', 'q'],
-    ['e8', 'k'],
-    ['f8', 'b'],
-    ['g8', 'n'],
-    ['h8', 'r'], // Fila 8 (negras)
-  ];
-  const [boardState, setBoardState] = useState(initialBoardState);
+  const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  const [fen, setFEN] = useState(initialFEN);
+
+  const board2DArray = FENToBoard2DArray(fen);
 
   const handlePieceMove = (fromPosition, toPosition) => {
-    // Implementa la lógica para mover las piezas y actualizar boardState
+    // Implementa la lógica para mover las piezas y actualizar el estado del tablero en FEN
+    const [fromFile, fromRank] = fromPosition;
+    const [toFile, toRank] = toPosition;
+    const piece =
+      board2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)];
+
+    // Actualiza la posición de origen a 'empty'
+    let updatedFEN = updateFENPosition(fen, fromFile, fromRank, '1');
+
+    // Actualiza la posición de destino con la pieza movida
+    updatedFEN = updateFENPosition(updatedFEN, toFile, toRank, piece);
+
+    setFEN(updatedFEN);
   };
 
   return (
     <div className="flex flex-wrap w-96">
-      {boardState.map(([square, piece]) => {
-        const [col, row] = square.split('');
-        const isLightSquare = (col.charCodeAt(0) + parseInt(row)) % 2 === 0;
+      {board2DArray.map((row, rowIndex) =>
+        row.map((piece, colIndex) => {
+          const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+          const rank = 8 - rowIndex;
+          const square = `${file}${rank}`;
+          const isLightSquare = (colIndex + rowIndex) % 2 === 0;
 
-        return (
-          <div
-            key={square}
-            className={`w-12 h-12 flex items-center justify-center border border-amber-100 ${
-              isLightSquare ? 'bg-amber-300' : 'bg-amber-800'
-            }`}
-            onClick={() => handlePieceMove({ square })}
-          ></div>
-        );
-      })}
+          return (
+            <div
+              key={square}
+              className={`w-12 h-12 flex items-center justify-center border border-amber-100 ${
+                isLightSquare ? 'bg-amber-300' : 'bg-amber-800'
+              }`}
+              onClick={() => handlePieceMove(square)}
+            >
+              {piece !== 'empty' ? piece : ''}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 };

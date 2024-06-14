@@ -1,5 +1,10 @@
 import { createContext, useState } from 'react';
-import { FENToBoard2DArray, updateFENPosition } from '../utils';
+import {
+  FENToBoard2DArray,
+  board2DArrayToFEN,
+  updateBoard2DArrayPosition,
+} from '../utils';
+import { validateFEN } from '../utils/validateFen';
 
 export const ChessBoardContext = createContext();
 
@@ -11,18 +16,17 @@ export const ChessBoardProvider = ({ children }) => {
 
   const handlePieceMove = (fromPosition, toPosition) => {
     // Implementa la lógica para mover las piezas y actualizar el estado del tablero en FEN
-    const [fromFile, fromRank] = fromPosition;
-    const [toFile, toRank] = toPosition;
-    const piece =
-      board2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)];
+    const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
+      board2DArray,
+      fromPosition,
+      toPosition
+    );
 
-    // Actualiza la posición de origen a 'empty'
-    let updatedFEN = updateFENPosition(fen, fromFile, fromRank, '1');
-
-    // Actualiza la posición de destino con la pieza movida
-    updatedFEN = updateFENPosition(updatedFEN, toFile, toRank, piece);
-
-    setFEN(updatedFEN);
+    if (validateFEN(board2DArrayToFEN(newBoard2DArray))) {
+      setFEN(board2DArrayToFEN(newBoard2DArray));
+    } else {
+      setFEN(board2DArrayToFEN(board2DArray));
+    }
   };
 
   return (

@@ -1,9 +1,23 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
-import Piece from '../Piece';
+import ChessSquare from '../ChessSquare';
 
 const ChessBoard = () => {
   const context = useContext(ChessBoardContext);
+  const [fromPosition, setFromPosition] = useState(null);
+  const [fromPiece, setFromPiece] = useState('empty');
+
+  const handleSquareClick = (square, piece) => {
+    console.log(fromPosition, square, fromPiece, piece);
+    if (fromPosition === null) {
+      setFromPosition(square);
+    } else {
+      if (fromPiece !== 'empty' && fromPosition !== square)
+        context.handlePieceMove(fromPosition, square);
+      setFromPosition(null);
+    }
+    setFromPiece(piece);
+  };
 
   return (
     <div className="flex flex-wrap w-96">
@@ -15,22 +29,13 @@ const ChessBoard = () => {
           const isLightSquare = (colIndex + rowIndex) % 2 === 0;
 
           return (
-            <div
+            <ChessSquare
               key={square}
-              className={`w-12 h-12 flex items-center justify-center ${
-                isLightSquare ? 'bg-amber-200' : 'bg-amber-700'
-              }`}
-              onClick={() => context.handlePieceMove(square)}
-            >
-              {piece !== 'empty' ? (
-                <Piece
-                  piece={piece}
-                  onClick={() => context.handlePieceMove(square)}
-                />
-              ) : (
-                ''
-              )}
-            </div>
+              square={square}
+              piece={piece}
+              isLightSquare={isLightSquare}
+              onClick={handleSquareClick}
+            />
           );
         })
       )}

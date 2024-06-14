@@ -41,44 +41,21 @@ export const board2DArrayToFEN = (board) => {
   return `${fenRows.join('/')} w KQkq - 0 1`;
 };
 
-// Actualizar una posición en FEN
-export const updateFENPosition = (fen, file, rank, newPiece) => {
-  const [position, turn, castling, enPassant, halfMove, fullMove] =
-    fen.split(' ');
-  const rows = position.split('/');
+// Actualizar una posición en representación bidimensional del tablero
+export const updateBoard2DArrayPosition = (
+  board2DArray,
+  fromPosition,
+  toPosition
+) => {
+  const [fromFile, fromRank] = fromPosition;
+  const [toFile, toRank] = toPosition;
+  const piece =
+    board2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)];
 
-  const rowIndex = 8 - rank;
-  const fileIndex = file.charCodeAt(0) - 'a'.charCodeAt(0);
+  let newBoard2DArray = [...board2DArray];
+  newBoard2DArray[8 - toRank][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] = piece;
+  newBoard2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)] =
+    'empty';
 
-  let targetRow = rows[rowIndex];
-  let colCounter = 0;
-  let newRow = '';
-
-  for (let char of targetRow) {
-    if (!isNaN(char)) {
-      const emptyCells = parseInt(char);
-      if (colCounter + emptyCells > fileIndex) {
-        const before = fileIndex - colCounter;
-        const after = emptyCells - before - 1;
-        if (before > 0) newRow += before;
-        newRow += newPiece;
-        if (after > 0) newRow += after;
-      } else {
-        newRow += char;
-      }
-      colCounter += emptyCells;
-    } else {
-      if (colCounter === fileIndex) {
-        newRow += newPiece;
-      } else {
-        newRow += char;
-      }
-      colCounter++;
-    }
-  }
-
-  rows[rowIndex] = newRow;
-  return `${rows.join(
-    '/'
-  )} ${turn} ${castling} ${enPassant} ${halfMove} ${fullMove}`;
+  return [newBoard2DArray, piece];
 };

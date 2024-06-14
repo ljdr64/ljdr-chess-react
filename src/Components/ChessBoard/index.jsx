@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FENToBoard2DArray, updateFENPosition } from '../../utils';
+import Piece from '../Piece';
 
 const ChessBoard = () => {
   const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -35,12 +36,16 @@ const ChessBoard = () => {
           return (
             <div
               key={square}
-              className={`w-12 h-12 flex items-center justify-center border border-amber-100 ${
-                isLightSquare ? 'bg-amber-300' : 'bg-amber-800'
+              className={`w-12 h-12 flex items-center justify-center ${
+                isLightSquare ? 'bg-amber-200' : 'bg-amber-700'
               }`}
               onClick={() => handlePieceMove(square)}
             >
-              {piece !== 'empty' ? piece : ''}
+              {piece !== 'empty' ? (
+                <Piece piece={piece} onClick={() => handlePieceMove(square)} />
+              ) : (
+                ''
+              )}
             </div>
           );
         })

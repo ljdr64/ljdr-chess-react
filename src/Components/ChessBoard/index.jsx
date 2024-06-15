@@ -8,6 +8,7 @@ const ChessBoard = () => {
   const [fromPiece, setFromPiece] = useState('empty');
   const [draggedFrom, setDraggedFrom] = useState(null);
   const [draggedPiece, setDraggedPiece] = useState('empty');
+  const [highlightedSquare, setHighlightedSquare] = useState(null);
 
   const sameType = (string1, string2) => {
     return (
@@ -20,44 +21,68 @@ const ChessBoard = () => {
 
   const handleSquareClick = (square, piece) => {
     console.log(fromPosition, square, fromPiece, piece);
-    if (fromPosition === null) {
-      setFromPosition(square);
-    } else {
-      if (fromPiece !== 'empty' && fromPosition !== square) {
-        if (!sameType(fromPiece, piece)) {
-          context.handlePieceMove(fromPosition, square);
+    if (fromPiece !== 'empty' || piece !== 'empty') {
+      if (fromPosition === null) {
+        setFromPosition(square);
+      } else {
+        if (fromPiece !== 'empty' && fromPosition !== square) {
+          if (!sameType(fromPiece, piece)) {
+            context.handlePieceMove(fromPosition, square);
+          }
         }
+        setFromPosition(null);
       }
-      setFromPosition(null);
+      setFromPiece(piece);
     }
-    setFromPiece(piece);
   };
 
   const handleDragStart = (square, piece) => {
-    setDraggedFrom(square);
-    setDraggedPiece(piece);
-  };
-
-  const handleDrop = (square) => {
-    if (draggedFrom !== null && draggedPiece !== 'empty') {
-      context.handlePieceMove(draggedFrom, square);
-      setDraggedFrom(null);
-      setDraggedPiece('empty');
+    console.log(square, piece);
+    if (piece !== 'empty') {
+      setDraggedFrom(square);
+      setDraggedPiece(piece);
+      setHighlightedSquare(square);
     }
   };
 
-  const handleDragOver = (event) => {
+  const handleDrop = (square) => {
+    console.log(square, draggedFrom, draggedPiece);
+    if (
+      draggedFrom !== null &&
+      (draggedPiece !== 'empty' || draggedPiece !== null)
+    ) {
+      if (draggedFrom !== square) {
+        context.handlePieceMove(draggedFrom, square);
+      }
+      setDraggedFrom(null);
+      setDraggedPiece('empty');
+      setHighlightedSquare(null);
+    }
+    resetDragState();
+  };
+
+  const handleDragOver = (event, square) => {
     event.preventDefault();
+    if (highlightedSquare !== square) {
+      setHighlightedSquare(square);
+    }
+  };
+
+  const resetDragState = () => {
+    setDraggedFrom(null);
+    setDraggedPiece(null);
+    setHighlightedSquare(null);
   };
 
   return (
-    <div className="flex flex-wrap w-96">
+    <div className="flex flex-wrap w-96 cursor-pointer">
       {context.board2DArray.map((row, rowIndex) =>
         row.map((piece, colIndex) => {
           const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
           const rank = 8 - rowIndex;
           const square = `${file}${rank}`;
           const isLightSquare = (colIndex + rowIndex) % 2 === 0;
+          const isHighlighted = highlightedSquare === square;
 
           return (
             <ChessSquare
@@ -65,9 +90,10 @@ const ChessBoard = () => {
               square={square}
               piece={piece}
               isLightSquare={isLightSquare}
+              isHighlighted={isHighlighted}
               onClick={handleSquareClick}
               onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
+              onDragOver={(event) => handleDragOver(event, square)}
               onDrop={handleDrop}
             />
           );

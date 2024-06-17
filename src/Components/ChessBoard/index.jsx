@@ -10,6 +10,8 @@ const ChessBoard = () => {
   const [draggedFrom, setDraggedFrom] = useState(null);
   const [draggedPiece, setDraggedPiece] = useState('empty');
   const [highlightedSquare, setHighlightedSquare] = useState(null);
+  const [dragStartSquare, setDragStartSquare] = useState(null);
+  const [possibleMoves, setPossibleMoves] = useState([]);
 
   const sameType = (string1, string2) => {
     return (
@@ -27,14 +29,38 @@ const ChessBoard = () => {
     return piece;
   };
 
+  const calculatePossibleMoves = (piece, fromSquare, board) => {
+    const possibleMoves = [];
+    board.forEach((row, rowIndex) => {
+      row.forEach((targetPiece, colIndex) => {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
+        if (
+          !sameType(piece, targetPiece) &&
+          isMoveLegal(piece, square, fromSquare, board)
+        ) {
+          possibleMoves.push(square);
+        }
+      });
+    });
+
+    return possibleMoves;
+  };
+
   const handleSquareClick = (square, piece) => {
     if (piece !== 'empty') {
       setHighlightedSquare(square);
     }
     if (fromPiece !== 'empty' || piece !== 'empty') {
       if (fromPosition === null) {
-        console.log(`${piece} ${fromPosition}-${square}`, fromPiece);
         setFromPosition(square);
+        const moves = calculatePossibleMoves(
+          piece,
+          square,
+          context.board2DArray
+        );
+        setPossibleMoves(moves);
       } else {
         if (fromPiece !== 'empty' && fromPosition !== square) {
           if (
@@ -42,12 +68,14 @@ const ChessBoard = () => {
             isMoveLegal(fromPiece, square, fromPosition, context.board2DArray)
           ) {
             console.log(`${fromPiece} ${fromPosition}-${square}`);
+
             context.handlePieceMove(fromPosition, square);
           }
         }
         setFromPiece('empty');
         setFromPosition(null);
         setHighlightedSquare(null);
+        setPossibleMoves([]);
       }
       setFromPiece(piece);
     }
@@ -58,6 +86,9 @@ const ChessBoard = () => {
       setDraggedPiece(piece);
       setDraggedFrom(square);
       setHighlightedSquare(square);
+      setDragStartSquare(square);
+      const moves = calculatePossibleMoves(piece, square, context.board2DArray);
+      setPossibleMoves(moves);
     }
   };
 
@@ -86,6 +117,8 @@ const ChessBoard = () => {
     setDraggedPiece('empty');
     setDraggedFrom(null);
     setHighlightedSquare(null);
+    setDragStartSquare(null);
+    setPossibleMoves([]);
   };
 
   const handleDragLeave = () => {
@@ -104,6 +137,8 @@ const ChessBoard = () => {
           const square = `${file}${rank}`;
           const isLightSquare = (colIndex + rowIndex) % 2 === 0;
           const isHighlighted = highlightedSquare === square;
+          const isDragStartSquare = dragStartSquare === square;
+          const isPossibleMove = possibleMoves.some((item) => item === square);
 
           return (
             <ChessSquare
@@ -112,6 +147,8 @@ const ChessBoard = () => {
               piece={piece}
               isLightSquare={isLightSquare}
               isHighlighted={isHighlighted}
+              isPossibleMove={isPossibleMove}
+              isDragStartSquare={isDragStartSquare}
               onClick={handleSquareClick}
               onDragStart={handleDragStart}
               onDragOver={(e) => handleDragOver(e, square)}

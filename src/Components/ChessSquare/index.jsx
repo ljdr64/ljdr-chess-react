@@ -5,6 +5,8 @@ const ChessSquare = ({
   piece,
   isLightSquare,
   isHighlighted,
+  isPossibleMove,
+  isDragStartSquare,
   onClick,
   onDragStart,
   onDragOver,
@@ -14,8 +16,12 @@ const ChessSquare = ({
     <div
       key={square}
       className={`w-12 h-12 flex items-center justify-center cursor-pointer ${
-        isHighlighted
+        isHighlighted || isDragStartSquare
           ? 'bg-green-300'
+          : isPossibleMove && isLightSquare
+          ? 'bg-green-600'
+          : isPossibleMove && !isLightSquare
+          ? 'bg-green-700'
           : isLightSquare
           ? 'bg-amber-200'
           : 'bg-amber-700'

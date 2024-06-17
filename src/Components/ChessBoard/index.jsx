@@ -64,14 +64,22 @@ const ChessBoard = () => {
   const handleDragOver = (event, square) => {
     const piece = getPieceAtSquare(square);
     event.preventDefault();
-    if (highlightedSquare !== square && !sameType(draggedPiece, piece)) {
+    if (
+      highlightedSquare !== square &&
+      !sameType(draggedPiece, piece) &&
+      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray)
+    ) {
       setHighlightedSquare(square);
     }
   };
 
   const handleDrop = (square) => {
     const piece = getPieceAtSquare(square);
-    if (draggedFrom !== square && !sameType(draggedPiece, piece)) {
+    if (
+      draggedFrom !== square &&
+      !sameType(draggedPiece, piece) &&
+      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray)
+    ) {
       console.log(`${draggedPiece} ${draggedFrom}-${square}`);
       context.handlePieceMove(draggedFrom, square);
     }

@@ -21,9 +21,9 @@ const ChessSquare = ({
           : 'bg-amber-700'
       }`}
       onClick={() => onClick(square, piece)}
-      onDragOver={(e) => (piece !== null ? onDragOver(e) : null)}
-      onDrop={() => onDrop(square)}
       onDragStart={() => onDragStart(square, piece)}
+      onDragOver={(e) => onDragOver(e, square)}
+      onDrop={() => onDrop(square)}
       draggable={piece !== 'empty'}
     >
       {piece !== 'empty' && <Piece piece={piece} />}

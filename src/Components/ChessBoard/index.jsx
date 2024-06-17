@@ -7,7 +7,6 @@ const ChessBoard = () => {
   const [fromPosition, setFromPosition] = useState(null);
   const [fromPiece, setFromPiece] = useState('empty');
   const [draggedFrom, setDraggedFrom] = useState(null);
-  const [draggedPiece, setDraggedPiece] = useState('empty');
   const [highlightedSquare, setHighlightedSquare] = useState(null);
 
   const sameType = (string1, string2) => {
@@ -37,28 +36,10 @@ const ChessBoard = () => {
   };
 
   const handleDragStart = (square, piece) => {
-    console.log(square, piece);
     if (piece !== 'empty') {
       setDraggedFrom(square);
-      setDraggedPiece(piece);
       setHighlightedSquare(square);
     }
-  };
-
-  const handleDrop = (square) => {
-    console.log(square, draggedFrom, draggedPiece);
-    if (
-      draggedFrom !== null &&
-      (draggedPiece !== 'empty' || draggedPiece !== null)
-    ) {
-      if (draggedFrom !== square) {
-        context.handlePieceMove(draggedFrom, square);
-      }
-      setDraggedFrom(null);
-      setDraggedPiece('empty');
-      setHighlightedSquare(null);
-    }
-    resetDragState();
   };
 
   const handleDragOver = (event, square) => {
@@ -68,14 +49,21 @@ const ChessBoard = () => {
     }
   };
 
-  const resetDragState = () => {
+  const handleDrop = (square) => {
+    context.handlePieceMove(draggedFrom, square);
     setDraggedFrom(null);
-    setDraggedPiece(null);
+    setHighlightedSquare(null);
+  };
+
+  const handleDragLeave = () => {
     setHighlightedSquare(null);
   };
 
   return (
-    <div className="flex flex-wrap w-96 cursor-pointer">
+    <div
+      className="flex flex-wrap w-96 cursor-pointer select-none"
+      onDragLeave={handleDragLeave}
+    >
       {context.board2DArray.map((row, rowIndex) =>
         row.map((piece, colIndex) => {
           const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
@@ -93,7 +81,7 @@ const ChessBoard = () => {
               isHighlighted={isHighlighted}
               onClick={handleSquareClick}
               onDragStart={handleDragStart}
-              onDragOver={(event) => handleDragOver(event, square)}
+              onDragOver={(e) => handleDragOver(e, square)}
               onDrop={handleDrop}
             />
           );

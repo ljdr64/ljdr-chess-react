@@ -7,6 +7,7 @@ const ChessBoard = () => {
   const [fromPosition, setFromPosition] = useState(null);
   const [fromPiece, setFromPiece] = useState('empty');
   const [draggedFrom, setDraggedFrom] = useState(null);
+  const [draggedPiece, setDraggedPiece] = useState('empty');
   const [highlightedSquare, setHighlightedSquare] = useState(null);
 
   const sameType = (string1, string2) => {
@@ -16,6 +17,13 @@ const ChessBoard = () => {
       (/[a-z]/.test(string1) === /[a-z]/.test(string2) ||
         /[A-Z]/.test(string1) === /[A-Z]/.test(string2))
     );
+  };
+
+  const getPieceAtSquare = (square) => {
+    const file = square[0].charCodeAt(0) - 'a'.charCodeAt(0);
+    const rank = 8 - square[1];
+    const piece = context.board2DArray[rank][file];
+    return piece;
   };
 
   const handleSquareClick = (square, piece) => {
@@ -37,20 +45,27 @@ const ChessBoard = () => {
 
   const handleDragStart = (square, piece) => {
     if (piece !== 'empty') {
+      setDraggedPiece(piece);
       setDraggedFrom(square);
       setHighlightedSquare(square);
     }
   };
 
   const handleDragOver = (event, square) => {
+    const piece = getPieceAtSquare(square);
     event.preventDefault();
-    if (highlightedSquare !== square) {
+    if (highlightedSquare !== square && !sameType(draggedPiece, piece)) {
       setHighlightedSquare(square);
     }
   };
 
   const handleDrop = (square) => {
-    context.handlePieceMove(draggedFrom, square);
+    console.log(`${draggedPiece} ${draggedFrom}-${square}`);
+    const piece = getPieceAtSquare(square);
+    if (draggedFrom !== square && !sameType(draggedPiece, piece)) {
+      context.handlePieceMove(draggedFrom, square);
+    }
+    setDraggedPiece('empty');
     setDraggedFrom(null);
     setHighlightedSquare(null);
   };

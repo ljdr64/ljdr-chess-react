@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
 import ChessSquare from '../ChessSquare';
+import { isMoveLegal } from '../../ChessMoves';
 
 const ChessBoard = () => {
   const context = useContext(ChessBoardContext);
@@ -36,7 +37,10 @@ const ChessBoard = () => {
         setFromPosition(square);
       } else {
         if (fromPiece !== 'empty' && fromPosition !== square) {
-          if (!sameType(fromPiece, piece)) {
+          if (
+            !sameType(fromPiece, piece) &&
+            isMoveLegal(fromPiece, square, fromPosition, context.board2DArray)
+          ) {
             console.log(`${fromPiece} ${fromPosition}-${square}`);
             context.handlePieceMove(fromPosition, square);
           }

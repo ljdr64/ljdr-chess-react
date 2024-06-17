@@ -27,17 +27,23 @@ const ChessBoard = () => {
   };
 
   const handleSquareClick = (square, piece) => {
-    console.log(fromPosition, square, fromPiece, piece);
+    if (piece !== 'empty') {
+      setHighlightedSquare(square);
+    }
     if (fromPiece !== 'empty' || piece !== 'empty') {
       if (fromPosition === null) {
+        console.log(`${piece} ${fromPosition}-${square}`, fromPiece);
         setFromPosition(square);
       } else {
         if (fromPiece !== 'empty' && fromPosition !== square) {
           if (!sameType(fromPiece, piece)) {
+            console.log(`${fromPiece} ${fromPosition}-${square}`);
             context.handlePieceMove(fromPosition, square);
           }
         }
+        setFromPiece('empty');
         setFromPosition(null);
+        setHighlightedSquare(null);
       }
       setFromPiece(piece);
     }
@@ -60,9 +66,9 @@ const ChessBoard = () => {
   };
 
   const handleDrop = (square) => {
-    console.log(`${draggedPiece} ${draggedFrom}-${square}`);
     const piece = getPieceAtSquare(square);
     if (draggedFrom !== square && !sameType(draggedPiece, piece)) {
+      console.log(`${draggedPiece} ${draggedFrom}-${square}`);
       context.handlePieceMove(draggedFrom, square);
     }
     setDraggedPiece('empty');

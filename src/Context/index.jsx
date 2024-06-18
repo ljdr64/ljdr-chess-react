@@ -12,21 +12,30 @@ export const ChessBoardProvider = ({ children }) => {
   const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const [fen, setFEN] = useState(initialFEN);
   const [currentTurn, setCurrentTurn] = useState('white');
+  const [fullmoveNumber, setFullmoveNumber] = useState(1);
 
   const board2DArray = FENToBoard2DArray(fen);
 
   const handlePieceMove = (fromPosition, toPosition) => {
-    // Implementa la lógica para mover las piezas y actualizar el estado del tablero en FEN
     const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
       board2DArray,
       fromPosition,
       toPosition
     );
+    const newFEN = board2DArrayToFEN(
+      newBoard2DArray,
+      currentTurn,
+      fullmoveNumber
+    );
 
-    if (validateFEN(board2DArrayToFEN(newBoard2DArray, currentTurn))) {
-      setFEN(board2DArrayToFEN(newBoard2DArray, currentTurn));
+    if (currentTurn === 'white') {
+      setFullmoveNumber(fullmoveNumber + 1);
+    }
+
+    if (validateFEN(newFEN)) {
+      setFEN(newFEN);
     } else {
-      setFEN(board2DArrayToFEN(board2DArray, currentTurn));
+      console.error('invalid FEN: ', newFEN);
     }
   };
 

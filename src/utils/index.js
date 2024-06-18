@@ -20,7 +20,7 @@ export const FENToBoard2DArray = (fen) => {
 };
 
 // Convertir representación bidimensional del tablero a FEN
-export const board2DArrayToFEN = (board, currentTurn) => {
+export const board2DArrayToFEN = (board, currentTurn, fullmoveNumber) => {
   const fenRows = board.map((row) => {
     let emptyCount = 0;
     return (
@@ -41,7 +41,7 @@ export const board2DArrayToFEN = (board, currentTurn) => {
 
   const fenTurn = currentTurn === 'white' ? 'b' : 'w';
 
-  return `${fenRows.join('/')} ${fenTurn} KQkq - 0 1`;
+  return `${fenRows.join('/')} ${fenTurn} KQkq - 0 ${fullmoveNumber}`;
 };
 
 // Actualizar una posición en representación bidimensional del tablero

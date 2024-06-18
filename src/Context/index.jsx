@@ -11,6 +11,7 @@ export const ChessBoardContext = createContext();
 export const ChessBoardProvider = ({ children }) => {
   const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const [fen, setFEN] = useState(initialFEN);
+  const [currentTurn, setCurrentTurn] = useState('white');
 
   const board2DArray = FENToBoard2DArray(fen);
 
@@ -22,15 +23,22 @@ export const ChessBoardProvider = ({ children }) => {
       toPosition
     );
 
-    if (validateFEN(board2DArrayToFEN(newBoard2DArray))) {
-      setFEN(board2DArrayToFEN(newBoard2DArray));
+    if (validateFEN(board2DArrayToFEN(newBoard2DArray, currentTurn))) {
+      setFEN(board2DArrayToFEN(newBoard2DArray, currentTurn));
     } else {
-      setFEN(board2DArrayToFEN(board2DArray));
+      setFEN(board2DArrayToFEN(board2DArray, currentTurn));
     }
   };
 
   return (
-    <ChessBoardContext.Provider value={{ board2DArray, handlePieceMove }}>
+    <ChessBoardContext.Provider
+      value={{
+        board2DArray,
+        handlePieceMove,
+        setCurrentTurn,
+        currentTurn,
+      }}
+    >
       {children}
     </ChessBoardContext.Provider>
   );

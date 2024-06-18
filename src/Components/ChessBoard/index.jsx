@@ -12,7 +12,6 @@ const ChessBoard = () => {
   const [highlightedSquare, setHighlightedSquare] = useState(null);
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
-  const [currentTurn, setCurrentTurn] = useState('white');
 
   const sameType = (string1, string2) => {
     return (
@@ -26,8 +25,8 @@ const ChessBoard = () => {
   const validateTurn = (piece) => {
     return (
       piece !== 'empty' &&
-      ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
-        (currentTurn === 'black' && piece === piece.toLowerCase()))
+      ((context.currentTurn === 'white' && piece === piece.toUpperCase()) ||
+        (context.currentTurn === 'black' && piece === piece.toLowerCase()))
     );
   };
 
@@ -83,10 +82,12 @@ const ChessBoard = () => {
             validateTurn(fromPiece)
           ) {
             console.log(
-              `${fromPiece} ${fromPosition}-${square} ${currentTurn}`
+              `${fromPiece} ${fromPosition}-${square} ${context.currentTurn}`
             );
             context.handlePieceMove(fromPosition, square);
-            setCurrentTurn(currentTurn === 'white' ? 'black' : 'white');
+            context.setCurrentTurn(
+              context.currentTurn === 'white' ? 'black' : 'white'
+            );
           }
         }
         setFromPiece('empty');
@@ -129,9 +130,13 @@ const ChessBoard = () => {
       isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray) &&
       validateTurn(draggedPiece)
     ) {
-      console.log(`${draggedPiece} ${draggedFrom}-${square} ${currentTurn}`);
+      console.log(
+        `${draggedPiece} ${draggedFrom}-${square} ${context.currentTurn}`
+      );
       context.handlePieceMove(draggedFrom, square);
-      setCurrentTurn(currentTurn === 'white' ? 'black' : 'white');
+      context.setCurrentTurn(
+        context.currentTurn === 'white' ? 'black' : 'white'
+      );
     }
     setDraggedPiece('empty');
     setDraggedFrom(null);

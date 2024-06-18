@@ -12,6 +12,7 @@ const ChessBoard = () => {
   const [highlightedSquare, setHighlightedSquare] = useState(null);
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
+  const [currentTurn, setCurrentTurn] = useState('white');
 
   const sameType = (string1, string2) => {
     return (
@@ -19,6 +20,14 @@ const ChessBoard = () => {
       string2 !== 'empty' &&
       (/[a-z]/.test(string1) === /[a-z]/.test(string2) ||
         /[A-Z]/.test(string1) === /[A-Z]/.test(string2))
+    );
+  };
+
+  const validateTurn = (piece) => {
+    return (
+      piece !== 'empty' &&
+      ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
+        (currentTurn === 'black' && piece === piece.toLowerCase()))
     );
   };
 
@@ -65,11 +74,19 @@ const ChessBoard = () => {
         if (fromPiece !== 'empty' && fromPosition !== square) {
           if (
             !sameType(fromPiece, piece) &&
-            isMoveLegal(fromPiece, square, fromPosition, context.board2DArray)
+            isMoveLegal(
+              fromPiece,
+              square,
+              fromPosition,
+              context.board2DArray
+            ) &&
+            validateTurn(fromPiece)
           ) {
-            console.log(`${fromPiece} ${fromPosition}-${square}`);
-
+            console.log(
+              `${fromPiece} ${fromPosition}-${square} ${currentTurn}`
+            );
             context.handlePieceMove(fromPosition, square);
+            setCurrentTurn(currentTurn === 'white' ? 'black' : 'white');
           }
         }
         setFromPiece('empty');
@@ -109,10 +126,12 @@ const ChessBoard = () => {
     if (
       draggedFrom !== square &&
       !sameType(draggedPiece, piece) &&
-      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray)
+      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray) &&
+      validateTurn(draggedPiece)
     ) {
-      console.log(`${draggedPiece} ${draggedFrom}-${square}`);
+      console.log(`${draggedPiece} ${draggedFrom}-${square} ${currentTurn}`);
       context.handlePieceMove(draggedFrom, square);
+      setCurrentTurn(currentTurn === 'white' ? 'black' : 'white');
     }
     setDraggedPiece('empty');
     setDraggedFrom(null);

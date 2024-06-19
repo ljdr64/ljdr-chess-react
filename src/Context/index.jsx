@@ -70,6 +70,7 @@ export const ChessBoardProvider = ({ children }) => {
   return (
     <ChessBoardContext.Provider
       value={{
+        fen,
         board2DArray,
         handlePieceMove,
         setCurrentTurn,

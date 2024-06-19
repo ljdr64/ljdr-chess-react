@@ -46,7 +46,7 @@ const ChessBoard = () => {
         const square = `${file}${rank}`;
         if (
           !sameType(piece, targetPiece) &&
-          isMoveLegal(piece, square, fromSquare, board)
+          isMoveLegal(piece, square, fromSquare, board, context.fen)
         ) {
           possibleMoves.push(square);
         }
@@ -77,7 +77,8 @@ const ChessBoard = () => {
               fromPiece,
               square,
               fromPosition,
-              context.board2DArray
+              context.board2DArray,
+              context.fen
             ) &&
             validateTurn(fromPiece)
           ) {
@@ -116,7 +117,7 @@ const ChessBoard = () => {
     if (
       highlightedSquare !== square &&
       !sameType(draggedPiece, piece) &&
-      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray)
+      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray, context.fen)
     ) {
       setHighlightedSquare(square);
     }
@@ -127,7 +128,7 @@ const ChessBoard = () => {
     if (
       draggedFrom !== square &&
       !sameType(draggedPiece, piece) &&
-      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray) &&
+      isMoveLegal(draggedPiece, square, draggedFrom, context.board2DArray, context.fen) &&
       validateTurn(draggedPiece)
     ) {
       console.log(

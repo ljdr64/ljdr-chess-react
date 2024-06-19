@@ -11,9 +11,10 @@ import { getPawnMoves } from './pawnMoves';
  * @param {array} square - The target square [row, column].
  * @param {array} fromPosition - The piece's current position [row, column].
  * @param {array} board - The board represented as a 2D array of characters.
+ * @param {string} fen - The current FEN notation of the board.
  * @returns {boolean} - true if the move is legal, false otherwise.
  */
-export function isMoveLegal(fromPiece, square, fromPosition, board) {
+export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
   switch (fromPiece.toLowerCase()) {
     case 'r':
       return getRookMoves(fromPiece, square, fromPosition, board);
@@ -24,7 +25,7 @@ export function isMoveLegal(fromPiece, square, fromPosition, board) {
     case 'q':
       return getQueenMoves(fromPiece, square, fromPosition, board);
     case 'k':
-      return getKingMoves(fromPiece, square, fromPosition, board);
+      return getKingMoves(fromPiece, square, fromPosition, board, fen);
     case 'p':
       return getPawnMoves(fromPiece, square, fromPosition, board);
     default:

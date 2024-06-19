@@ -42,6 +42,22 @@ export const ChessBoardProvider = ({ children }) => {
     return newCastlingAvailability;
 };
 
+const getEnPassantSquare = (piece, fromPosition, toPosition) => {
+  if (piece === 'P') {
+    if (fromPosition[1] === '2' && toPosition[1] === '4') {
+      const enPassantSquare = toPosition[0] + '3';
+      return enPassantSquare;
+    }
+  }
+  if (piece === 'p') {
+    if (fromPosition[1] === '7' && toPosition[1] === '5') {
+      const enPassantSquare = toPosition[0] + '6';
+      return enPassantSquare;
+    }
+  }
+  return '-';
+};
+
   const handlePieceMove = (fromPosition, toPosition) => {
     const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
       board2DArray,
@@ -53,6 +69,7 @@ export const ChessBoardProvider = ({ children }) => {
       currentTurn,
       fullmoveNumber,
       updateCastlingAvailability(fen, fromPosition),
+      getEnPassantSquare(piece, fromPosition, toPosition),
     );
     
     if (currentTurn === 'white') {

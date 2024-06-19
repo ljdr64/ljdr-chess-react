@@ -56,13 +56,33 @@ export const updateBoard2DArrayPosition = (
     board2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)];
 
   let newBoard2DArray = [...board2DArray];
+  
+  if (
+    piece === 'P' &&
+     fromRank === '5' &&
+     toRank === '6' &&
+     Math.abs(fromFile.charCodeAt(0) - toFile.charCodeAt(0)) === 1 &&
+     newBoard2DArray[2][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] === 'empty'
+    ) {
+      newBoard2DArray[3][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] = 'empty';
+  }
+
+  if (
+    piece === 'p' &&
+     fromRank === '4' &&
+     toRank === '3' &&
+     Math.abs(fromFile.charCodeAt(0) - toFile.charCodeAt(0)) === 1 &&
+     newBoard2DArray[5][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] === 'empty'
+    ) {
+      newBoard2DArray[4][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] = 'empty';
+  }
+
   newBoard2DArray[8 - toRank][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] = piece;
   newBoard2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)] =
     'empty';
 
   if (piece === 'K' && fromFile === 'e' && fromRank === '1' && toRank === '1') {
     if (toFile === 'g') {
-      console.log('piece');
       newBoard2DArray[7][5] = 'R';
       newBoard2DArray[7][7] = 'empty';
     }

@@ -1,4 +1,14 @@
-export function getPawnMoves(fromPiece, square, fromPosition, board) {
+/**
+ * Function that extracts the en passant square from a FEN notation.
+ * @param {string} currentFEN - The full FEN notation.
+ * @returns {string} - The en passant square (e.g., 'e3', 'd6'), or '-' if not available.
+ */
+function getEnPassantSquare(currentFEN) {
+  // Split the FEN notation into its components and return the 4th element
+  return currentFEN.split(' ')[3];
+}
+
+export function getPawnMoves(fromPiece, square, fromPosition, board, fen) {
   let legalMoves = false;
 
   const file = square[0].charCodeAt(0) - 'a'.charCodeAt(0);
@@ -15,6 +25,10 @@ export function getPawnMoves(fromPiece, square, fromPosition, board) {
       ) {
         legalMoves = true;
       }
+      if (Math.abs(file - fromFile) === 1 && fromRank - rank === 1 && 
+      getEnPassantSquare(fen) === square) {
+        legalMoves = true;
+      }
     } else if (Math.abs(file - fromFile) === 1 && fromRank - rank === 1) {
       legalMoves = true;
     }
@@ -26,6 +40,10 @@ export function getPawnMoves(fromPiece, square, fromPosition, board) {
         file === fromFile &&
         (rank - fromRank === 1 || (fromRank === 1 && rank - fromRank === 2))
       ) {
+        legalMoves = true;
+      }
+      if (Math.abs(file - fromFile) === 1 && rank - fromRank === 1 && 
+      getEnPassantSquare(fen) === square) {
         legalMoves = true;
       }
     } else if (Math.abs(file - fromFile) === 1 && rank - fromRank === 1) {

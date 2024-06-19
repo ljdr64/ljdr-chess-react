@@ -27,7 +27,7 @@ export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
     case 'k':
       return getKingMoves(fromPiece, square, fromPosition, board, fen);
     case 'p':
-      return getPawnMoves(fromPiece, square, fromPosition, board);
+      return getPawnMoves(fromPiece, square, fromPosition, board, fen);
     default:
       console.warn(`No move function found for piece '${fromPiece}'.`);
       return false;

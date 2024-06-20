@@ -34,6 +34,9 @@ export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
   }
 
   if (fromPiece === 'K' && fromPosition === 'e1') {
+    if ((square === 'g1' || square === 'c1') && isWhiteKingInCheck(board)) {
+      return false;
+    }
     if (square === 'g1' && isWhiteKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'f1')[0])) {
       return false;
     }  
@@ -43,6 +46,9 @@ export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
   }
 
   if (fromPiece === 'k' && fromPosition === 'e8') {
+    if ((square === 'g8' || square === 'c8') && isBlackKingInCheck(board)) {
+      return false;
+    }
     if (square === 'g8' && isBlackKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'f8')[0])) {
       return false;
     }  

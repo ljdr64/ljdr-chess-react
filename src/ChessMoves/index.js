@@ -19,9 +19,20 @@ import { isBlackKingInCheck, isWhiteKingInCheck } from '../KingInCheck';
 export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
   let isCurrentMoveLegal = false;
 
+  const firstRow = fen.split(' ')[0].split('/')[0];
+  const lastRow = fen.split(' ')[0].split('/')[7];
   const turn = fen.split(' ')[1];
   
   const newBoard = updateBoard2DArrayPosition(board, fromPosition, square)[0];
+
+  if (firstRow.includes('P') || lastRow.includes('p')) {
+    return false;
+  }
+
+  if ((turn === 'w' && fromPiece === fromPiece.toLowerCase()) || 
+      (turn === 'b' && fromPiece === fromPiece.toUpperCase())) {
+    return false;
+  }
 
   if ((turn === 'w' && fromPiece === fromPiece.toLowerCase()) || 
       (turn === 'b' && fromPiece === fromPiece.toUpperCase())) {

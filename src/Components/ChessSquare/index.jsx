@@ -1,4 +1,5 @@
 import Piece from '../Piece';
+import PromotionPawn from '../PromotionPawn';
 
 const getSquareClass = (
   isLightSquare,
@@ -6,9 +7,13 @@ const getSquareClass = (
   isDragStartSquare,
   isPossibleMove,
   isWhiteInCheck,
-  isBlackInCheck
+  isBlackInCheck,
+  isPromotedWhitePawn,
+  isPromotedBlackPawn
 ) => {
-  if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
+  if (isPromotedWhitePawn || isPromotedBlackPawn) {
+    return 'bg-blue-500';
+  } else if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
     return 'bg-red-400';
   } else if ((isWhiteInCheck || isBlackInCheck) && !isLightSquare) {
     return 'bg-red-500';
@@ -34,6 +39,8 @@ const ChessSquare = ({
   isDragStartSquare,
   isWhiteInCheck,
   isBlackInCheck,
+  isPromotedWhitePawn,
+  isPromotedBlackPawn,
   onClick,
   onDragStart,
   onDragOver,
@@ -45,7 +52,9 @@ const ChessSquare = ({
     isDragStartSquare,
     isPossibleMove,
     isWhiteInCheck,
-    isBlackInCheck
+    isBlackInCheck,
+    isPromotedWhitePawn,
+    isPromotedBlackPawn
   );
 
   return (
@@ -59,6 +68,16 @@ const ChessSquare = ({
       draggable={piece !== 'empty'}
     >
       {piece !== 'empty' && <Piece piece={piece} />}
+      {isPromotedWhitePawn && piece === 'P' && (
+        <div className='shadow-lg bg-white h-auto mt-[168px] z-20'>
+          <PromotionPawn piece={piece} />
+        </div>
+      )}
+      {isPromotedBlackPawn && piece === 'p' && (
+        <div className='shadow-lg bg-white h-auto mb-[168px] z-20'>
+          <PromotionPawn piece={piece} />
+        </div>
+      )}
     </div>
   );
 };

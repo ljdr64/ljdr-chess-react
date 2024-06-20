@@ -164,8 +164,10 @@ const ChessBoard = () => {
           const isHighlighted = highlightedSquare === square;
           const isDragStartSquare = dragStartSquare === square;
           const isPossibleMove = possibleMoves.some((item) => item === square);
-          const isWhiteInCheck = (piece === 'K' && context.isWhiteKingInCheck(context.board2DArray))
-          const isBlackInCheck = (piece === 'k' && context.isBlackKingInCheck(context.board2DArray))
+          const isWhiteInCheck = (piece === 'K' && context.isWhiteKingInCheck(context.board2DArray));
+          const isBlackInCheck = (piece === 'k' && context.isBlackKingInCheck(context.board2DArray));
+          const isPromotedWhitePawn = (piece === 'P' && rank === 8);
+          const isPromotedBlackPawn = (piece === 'p' && rank === 1);
 
           return (
             <ChessSquare
@@ -178,6 +180,8 @@ const ChessBoard = () => {
               isDragStartSquare={isDragStartSquare}
               isWhiteInCheck={isWhiteInCheck}
               isBlackInCheck={isBlackInCheck}
+              isPromotedWhitePawn={isPromotedWhitePawn}
+              isPromotedBlackPawn={isPromotedBlackPawn}
               onClick={handleSquareClick}
               onDragStart={handleDragStart}
               onDragOver={(e) => handleDragOver(e, square)}

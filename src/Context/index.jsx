@@ -16,6 +16,7 @@ export const ChessBoardProvider = ({ children }) => {
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
   const [onPromote, setOnPromote] = useState(null);
+  const [notation, setNotation] = useState('');  
   
   const board2DArray = FENToBoard2DArray(fen);
 
@@ -122,6 +123,9 @@ const handlePieceMove = (fromPosition, toPosition) => {
         handlePromote,
         setOnPromote,
         onPromote,
+        fullmoveNumber,
+        setNotation,
+        notation,
       }}
     >
       {children}

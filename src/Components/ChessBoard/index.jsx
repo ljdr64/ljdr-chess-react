@@ -56,6 +56,49 @@ const ChessBoard = () => {
     return possibleMoves;
   };
 
+
+  const formatNotation = (fromPiece, fromPosition, piece, square) => {
+    let newNotation = '';
+
+    if (piece === 'empty') {
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        newNotation = ` ${fromPiece.toUpperCase()}${square}`;
+      } else if (fromPiece === 'P' && fromPosition[0] === square[0]) {
+        newNotation = ` ${context.fullmoveNumber}. ${square}`;
+      } else if (fromPiece === 'P' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p' && fromPosition[0] === square[0]) {
+        newNotation = ` ${square}`;
+      } else if (fromPiece === 'p' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${fromPosition[0]}x${square}`;
+      } else {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPiece}${square}`;
+      }
+    } else {
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        newNotation = ` ${fromPiece.toUpperCase()}x${square}`;
+      } else if (fromPiece === 'P') {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p') {
+        newNotation = ` ${fromPosition[0]}x${square}`;
+      } else {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPiece}x${square}`;
+      }
+    }
+
+    if (fromPiece === 'K' && fromPosition === 'e1') {
+      if (square === 'g1') {newNotation = ` ${context.fullmoveNumber}. 0-0`}
+      if (square === 'c1') {newNotation = ` ${context.fullmoveNumber}. 0-0-0`}
+    }
+
+    if (fromPiece === 'k' && fromPosition === 'e8') {
+      if (square === 'g8') {newNotation = ' 0-0'}
+      if (square === 'c8') {newNotation = ' 0-0-0'}
+    }
+  
+    context.setNotation(prevNotation => prevNotation + newNotation);
+  };
+
   const handleSquareClick = (square, piece) => {
     if (piece !== 'empty') {
       setHighlightedSquare(square);
@@ -85,6 +128,7 @@ const ChessBoard = () => {
             console.log(
               `${fromPiece} ${fromPosition}-${square} ${context.currentTurn}`
             );
+            formatNotation(fromPiece, fromPosition, piece, square)
             context.handlePieceMove(fromPosition, square);
             context.setCurrentTurn(
               context.currentTurn === 'white' ? 'black' : 'white'
@@ -134,6 +178,7 @@ const ChessBoard = () => {
       console.log(
         `${draggedPiece} ${draggedFrom}-${square} ${context.currentTurn}`
       );
+      formatNotation(draggedPiece, draggedFrom, piece, square)
       context.handlePieceMove(draggedFrom, square);
       context.setCurrentTurn(
         context.currentTurn === 'white' ? 'black' : 'white'

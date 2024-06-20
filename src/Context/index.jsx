@@ -3,6 +3,7 @@ import {
   FENToBoard2DArray,
   board2DArrayToFEN,
   updateBoard2DArrayPosition,
+  promotionPieceInBoard2DArray,
 } from '../utils';
 import { validateFEN } from '../utils/validateFen';
 import { isWhiteKingInCheck, isBlackKingInCheck } from '../KingInCheck';
@@ -14,7 +15,27 @@ export const ChessBoardProvider = ({ children }) => {
   const [fen, setFEN] = useState(initialFEN);
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
+  const [onPromote, setOnPromote] = useState(null);
+  
   const board2DArray = FENToBoard2DArray(fen);
+
+  const handlePromote = (piece, square) => {
+    setOnPromote(piece);
+    const newFEN = board2DArrayToFEN(
+      promotionPieceInBoard2DArray(board2DArray, square, piece),
+      currentTurn === 'white' ? 'black' : 'white',
+      currentTurn === 'white' ? fullmoveNumber : fullmoveNumber - 1,
+      updateCastlingAvailability(fen, square),
+      '-',
+    );
+    
+    if (validateFEN(newFEN)) {
+      setFEN(newFEN);
+    } else {
+      console.error('invalid FEN: ', newFEN);
+    }
+    console.log(newFEN);
+  };
 
   const updateCastlingAvailability = (currentFEN, fromPosition) => {
     const fenParts = currentFEN.split(' ');
@@ -59,34 +80,34 @@ const getEnPassantSquare = (piece, fromPosition, toPosition) => {
   return '-';
 };
 
-  const handlePieceMove = (fromPosition, toPosition) => {
-    const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
-      board2DArray,
-      fromPosition,
-      toPosition
-    );
-    const newFEN = board2DArrayToFEN(
-      newBoard2DArray,
-      currentTurn,
-      fullmoveNumber,
-      updateCastlingAvailability(fen, fromPosition),
-      getEnPassantSquare(piece, fromPosition, toPosition),
-    );
+const handlePieceMove = (fromPosition, toPosition) => {
+  const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
+    board2DArray,
+    fromPosition,
+    toPosition
+  );
+  const newFEN = board2DArrayToFEN(
+    newBoard2DArray,
+    currentTurn,
+    fullmoveNumber,
+    updateCastlingAvailability(fen, fromPosition),
+    getEnPassantSquare(piece, fromPosition, toPosition),
+  );
 
-    console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
-    console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
-    
-    if (currentTurn === 'white') {
-      setFullmoveNumber(fullmoveNumber + 1);
-    }
+  console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
+  console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
+  
+  if (currentTurn === 'white') {
+    setFullmoveNumber(fullmoveNumber + 1);
+  }
 
-    if (validateFEN(newFEN)) {
-      setFEN(newFEN);
-    } else {
-      console.error('invalid FEN: ', newFEN);
-    }
-    console.log(newFEN);
-  };
+  if (validateFEN(newFEN)) {
+    setFEN(newFEN);
+  } else {
+    console.error('invalid FEN: ', newFEN);
+  }
+  console.log(newFEN);
+};
 
   return (
     <ChessBoardContext.Provider
@@ -98,6 +119,9 @@ const getEnPassantSquare = (piece, fromPosition, toPosition) => {
         currentTurn,
         isWhiteKingInCheck,
         isBlackKingInCheck,
+        handlePromote,
+        setOnPromote,
+        onPromote,
       }}
     >
       {children}

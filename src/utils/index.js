@@ -105,3 +105,16 @@ export const updateBoard2DArrayPosition = (
 
   return [newBoard2DArray, piece];
 };
+
+// Promocion de peon en representación bidimensional del tablero
+export const promotionPieceInBoard2DArray = (
+  board2DArray,
+  fromPosition,
+  piecePromote
+) => {
+  const [fromFile, fromRank] = fromPosition;  
+  let newBoard2DArray = board2DArray.map(row => [...row]);
+  newBoard2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)] = piecePromote
+
+  return newBoard2DArray;
+};

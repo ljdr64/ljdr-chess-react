@@ -70,12 +70,12 @@ const ChessSquare = ({
       {piece !== 'empty' && <Piece piece={piece} />}
       {isPromotedWhitePawn && piece === 'P' && (
         <div className='shadow-lg bg-white h-auto mt-[168px] z-20'>
-          <PromotionPawn piece={piece} />
+          <PromotionPawn piece={piece} square={square} />
         </div>
       )}
       {isPromotedBlackPawn && piece === 'p' && (
         <div className='shadow-lg bg-white h-auto mb-[168px] z-20'>
-          <PromotionPawn piece={piece} />
+          <PromotionPawn piece={piece} square={square} />
         </div>
       )}
     </div>

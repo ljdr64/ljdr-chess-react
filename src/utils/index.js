@@ -55,7 +55,7 @@ export const updateBoard2DArrayPosition = (
   const piece =
     board2DArray[8 - fromRank][fromFile.charCodeAt(0) - 'a'.charCodeAt(0)];
 
-  let newBoard2DArray = [...board2DArray];
+  let newBoard2DArray = board2DArray.map(row => [...row]);
   
   if (
     piece === 'P' &&

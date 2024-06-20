@@ -4,6 +4,8 @@ import { getKnightMoves } from './knightMoves';
 import { getQueenMoves } from './queenMoves';
 import { getKingMoves } from './kingMoves';
 import { getPawnMoves } from './pawnMoves';
+import { updateBoard2DArrayPosition } from '../utils';
+import { isBlackKingInCheck, isWhiteKingInCheck } from '../KingInCheck';
 
 /**
  * Function to check if a move is legal for a piece at a given position.
@@ -15,21 +17,63 @@ import { getPawnMoves } from './pawnMoves';
  * @returns {boolean} - true if the move is legal, false otherwise.
  */
 export function isMoveLegal(fromPiece, square, fromPosition, board, fen) {
+  let isCurrentMoveLegal = false;
+
+  const turn = fen.split(' ')[1];
+  
+  const newBoard = updateBoard2DArrayPosition(board, fromPosition, square)[0];
+
+  if ((turn === 'w' && fromPiece === fromPiece.toLowerCase()) || 
+      (turn === 'b' && fromPiece === fromPiece.toUpperCase())) {
+    return false;
+  }
+
+  if ((fromPiece === fromPiece.toUpperCase() && isWhiteKingInCheck(newBoard)) ||
+      (fromPiece === fromPiece.toLowerCase() && isBlackKingInCheck(newBoard))) {
+    return false;
+  }
+
+  if (fromPiece === 'K' && fromPosition === 'e1') {
+    if (square === 'g1' && isWhiteKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'f1')[0])) {
+      return false;
+    }  
+    if (square === 'c1' && isWhiteKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'd1')[0])) {
+      return false;
+    }  
+  }
+
+  if (fromPiece === 'k' && fromPosition === 'e8') {
+    if (square === 'g8' && isBlackKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'f8')[0])) {
+      return false;
+    }  
+    if (square === 'c8' && isBlackKingInCheck(updateBoard2DArrayPosition(board, fromPosition, 'd8')[0])) {
+      return false;
+    }  
+  }
+  
   switch (fromPiece.toLowerCase()) {
     case 'r':
-      return getRookMoves(fromPiece, square, fromPosition, board);
+      isCurrentMoveLegal = getRookMoves(fromPiece, square, fromPosition, board);
+      break;
     case 'b':
-      return getBishopMoves(fromPiece, square, fromPosition, board);
+      isCurrentMoveLegal = getBishopMoves(fromPiece, square, fromPosition, board);
+      break;
     case 'n':
-      return getKnightMoves(fromPiece, square, fromPosition, board);
+      isCurrentMoveLegal = getKnightMoves(fromPiece, square, fromPosition, board);
+      break;
     case 'q':
-      return getQueenMoves(fromPiece, square, fromPosition, board);
+      isCurrentMoveLegal = getQueenMoves(fromPiece, square, fromPosition, board);
+      break;
     case 'k':
-      return getKingMoves(fromPiece, square, fromPosition, board, fen);
+      isCurrentMoveLegal = getKingMoves(fromPiece, square, fromPosition, board, fen);
+      break;
     case 'p':
-      return getPawnMoves(fromPiece, square, fromPosition, board, fen);
+      isCurrentMoveLegal = getPawnMoves(fromPiece, square, fromPosition, board, fen);
+      break;
     default:
-      console.warn(`No move function found for piece '${fromPiece}'.`);
-      return false;
+      isCurrentMoveLegal = false;
+      break;
   }
+
+  return isCurrentMoveLegal;
 }

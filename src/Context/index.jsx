@@ -5,6 +5,7 @@ import {
   updateBoard2DArrayPosition,
 } from '../utils';
 import { validateFEN } from '../utils/validateFen';
+import { isWhiteKingInCheck, isBlackKingInCheck } from '../KingInCheck';
 
 export const ChessBoardContext = createContext();
 
@@ -71,6 +72,9 @@ const getEnPassantSquare = (piece, fromPosition, toPosition) => {
       updateCastlingAvailability(fen, fromPosition),
       getEnPassantSquare(piece, fromPosition, toPosition),
     );
+
+    console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
+    console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
     
     if (currentTurn === 'white') {
       setFullmoveNumber(fullmoveNumber + 1);
@@ -92,6 +96,8 @@ const getEnPassantSquare = (piece, fromPosition, toPosition) => {
         handlePieceMove,
         setCurrentTurn,
         currentTurn,
+        isWhiteKingInCheck,
+        isBlackKingInCheck,
       }}
     >
       {children}

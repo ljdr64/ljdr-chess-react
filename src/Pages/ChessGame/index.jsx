@@ -19,10 +19,10 @@ function ChessGame() {
             <ChessNotation />
           </div>
         </div>
-        <div className="bg-gray-200 p-8 rounded-lg shadow-lg">
-          <div className="text-center text-sm bg-white p-2 overflow-x-auto">
+        <div className="bg-gray-200 max-w-[672px] p-8 rounded-lg shadow-lg">
+          <pre className="text-center text-sm bg-white p-2 overflow-x-scroll">
             {context.fen}
-          </div>
+          </pre>
         </div>
       </div>
     </Layout>

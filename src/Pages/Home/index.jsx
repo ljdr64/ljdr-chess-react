@@ -3,7 +3,7 @@ import Layout from '../../Components/Layout';
 
 function Home() {
   return <Layout>Home 
-      <div>
+      <div className='flex'>
         <Draggable />
       </div>
     </Layout>;

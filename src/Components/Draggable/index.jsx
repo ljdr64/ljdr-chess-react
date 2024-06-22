@@ -1,14 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import Piece from '../Piece';
+import { ChessBoardContext } from '../../Context';
+import ChessSquare from '../ChessSquare';
 
 const Draggable = () => {
+  const context = useContext(ChessBoardContext);
+
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [squarePieceDrop, setSquarePieceDrop] = useState([null, 'empty']);
   const elementRef = useRef(null);
-  const dropAreaRef = useRef(null);
+
+  const squareRefs = {};
+  context.board2DArray.forEach((row, rowIndex) =>
+    row.forEach((piece, colIndex) => {
+      const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+      const rank = 8 - rowIndex;
+      const square = `${file}${rank}`;
+      squareRefs[square] = useRef(null);
+    })
+  );
+
   let dimension = { width: 0, height: 0 };
   let positionElement = { x: 0, y: 0 };
-  let positionDropArea = { x: 0, y: 0 };
 
   function handleMouseDown(e) {
     const element = elementRef.current;
@@ -17,7 +31,6 @@ const Draggable = () => {
     const posX = element.offsetLeft;
     const posY = element.offsetTop;
     positionElement = { x: posX, y: posY };
-    console.log('Element: ', positionElement);
 
     setIsDragging(true);
     setPosition({ x: e.clientX - posX - dimension.width / 2, y: e.clientY - posY - dimension.height / 2 });
@@ -38,7 +51,6 @@ const Draggable = () => {
   }
 
   function handleMouseUp() {
-    const dropArea = dropAreaRef.current;
     const element = elementRef.current;
     dimension = { width: element.clientWidth, height: element.clientHeight };
 
@@ -47,35 +59,82 @@ const Draggable = () => {
     positionElement = { x: posX, y: posY };
     console.log('Element: ', positionElement);
 
-    const dropPosX = dropArea.offsetLeft;
-    const dropPosY = dropArea.offsetTop;
-    positionDropArea = { x: dropPosX, y: dropPosY };
-    console.log('Drop Area: ', positionDropArea);
+    const squareArea = {};
+    const squarePos = {};
+    context.board2DArray.forEach((row, rowIndex) =>
+      row.forEach((piece, colIndex) => {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
+        squareArea[square] = squareRefs[square].current;
+        squarePos[square] = {
+          posX: squareArea[square].offsetLeft,
+          posY: squareArea[square].offsetTop,
+        }
+      })
+    );
 
-    console.log('Position: ', position);
+    let positionFound = false;
+    context.board2DArray.forEach((row, rowIndex) => {
+      row.forEach((piece, colIndex) => {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
 
-    setIsDragging(false);
-    if (position.y >= dropPosY - posY - dimension.width
-       && position.y <= dropPosY - posY + dimension.width
-       && position.x >= dropPosX - posX - dimension.height 
-       && position.x <= dropPosX - posX + dimension.height
-    ) {
-      setPosition({ x: dropPosX - posX, y: dropPosY - posY})
-    } else {
-      setPosition({ x: 0, y: 0})
+        if (
+          position.y >= squarePos[square].posY - posY - 36 &&
+          position.y <= squarePos[square].posY - posY + 36 &&
+          position.x >= squarePos[square].posX - posX - 36 &&
+          position.x <= squarePos[square].posX - posX + 36
+        ) {
+          setPosition({
+            x: squarePos[square].posX - posX,
+            y: squarePos[square].posY - posY
+          });
+          setSquarePieceDrop([square, piece])
+          positionFound = true;
+        }
+      });
+    });
+
+    if (!positionFound) {
+      setPosition({ x: 0, y: 0 })
+      setSquarePieceDrop([null, 'empty'])
     }
+
+    console.log('Position: ', position, squarePieceDrop);
+    setIsDragging(false);
   }
 
   return (
     <div className="container mx-auto mt-4 select-none">
       <div
-        className="absolute w-12 h-12 bg-blue-500 rounded-md shadow-md pointer-events-none"
-        style={{
-          top: '20',
-          left: '50%',
-          transform: 'translate(-50%, 0)',
-        }}
-      ></div>
+        className="flex flex-wrap w-96 cursor-pointer select-none"
+      >
+        {context.board2DArray.map((row, rowIndex) =>
+          row.map((piece, colIndex) => {
+            const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+            const rank = 8 - rowIndex;
+            const square = `${file}${rank}`;
+            const isLightSquare = (colIndex + rowIndex) % 2 === 0;
+
+            return (
+              <div
+                ref={squareRefs[square]}
+              >
+                <div className='h-full pointer-events-none'>
+                  <ChessSquare
+                    key={square}
+                    square={square}
+                    piece={piece}
+                    isLightSquare={isLightSquare}
+                  />
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
       <div
         ref={elementRef}
         id="element"
@@ -86,21 +145,8 @@ const Draggable = () => {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div className='h-full pointer-events-none'>
+        <div className='h-full pointer-events-none bg-blue-200'>
           <Piece piece={'N'} />
-        </div>
-        
-      </div>
-      <div
-        ref={dropAreaRef}
-        className="drop-area absolute w-12 h-12 top-[460px] rounded-md shadow-md cursor-pointer select-none"
-        style={{
-          backgroundColor: 'rgba(255, 0, 0, 0.3)',
-          pointerEvents: 'none',
-        }}
-      >        
-        <div className='h-full pointer-events-none'>
-          <Piece piece={'n'} />
         </div>
       </div>
     </div>

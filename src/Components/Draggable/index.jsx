@@ -1,7 +1,6 @@
 import React, { useContext, useRef, useState } from 'react';
 import Piece from '../Piece';
 import { ChessBoardContext } from '../../Context';
-import ChessSquare from '../ChessSquare';
 
 const Draggable = () => {
   const context = useContext(ChessBoardContext);
@@ -9,6 +8,8 @@ const Draggable = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [squarePieceDrop, setSquarePieceDrop] = useState([null, 'empty']);
+  const [draggingPiece, setDraggingPiece] = useState('empty');
+  const [currentSquare, setCurrentSquare] = useState(null);
   const elementRef = useRef(null);
 
   const squareRefs = {};
@@ -24,16 +25,28 @@ const Draggable = () => {
   let dimension = { width: 0, height: 0 };
   let positionElement = { x: 0, y: 0 };
 
-  function handleMouseDown(e) {
+  function handleMouseDown(e, square, piece) {
+    if (piece === 'empty') return;
     const element = elementRef.current;
+
+    setDraggingPiece(piece);
+    setCurrentSquare(square);
     dimension = { width: element.clientWidth, height: element.clientHeight };
 
+    const squareArea = {};
+    const squarePos = {};
+    squareArea[square] = squareRefs[square].current;
+    squarePos[square] = {
+      posX: squareArea[square].offsetLeft,
+      posY: squareArea[square].offsetTop,
+    }
     const posX = element.offsetLeft;
     const posY = element.offsetTop;
     positionElement = { x: posX, y: posY };
+    console.log('Drag Start: ', positionElement);
 
     setIsDragging(true);
-    setPosition({ x: e.clientX - posX - dimension.width / 2, y: e.clientY - posY - dimension.height / 2 });
+    setPosition({ x: squarePos[square].posX - posX, y: squarePos[square].posY - posY });
   }
 
   function handleMouseMove(e) {
@@ -51,6 +64,8 @@ const Draggable = () => {
   }
 
   function handleMouseUp() {
+    if (!isDragging) return;
+
     const element = elementRef.current;
     dimension = { width: element.clientWidth, height: element.clientHeight };
 
@@ -102,15 +117,13 @@ const Draggable = () => {
       setSquarePieceDrop([null, 'empty'])
     }
 
-    console.log('Position: ', position, squarePieceDrop);
+    console.log('Position: ', position, draggingPiece, currentSquare, squarePieceDrop);
     setIsDragging(false);
   }
 
   return (
     <div className="container mx-auto mt-4 select-none">
-      <div
-        className="flex flex-wrap w-96 cursor-pointer select-none"
-      >
+      <div className="flex flex-wrap w-96 cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
             const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
@@ -121,15 +134,13 @@ const Draggable = () => {
             return (
               <div
                 ref={squareRefs[square]}
+                key={square}
+                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${isLightSquare ? 'bg-amber-200' : 'bg-amber-700'
+                  }`}
+                onMouseDown={(e) => handleMouseDown(e, square, piece)}
               >
-                <div className='h-full pointer-events-none'>
-                  <ChessSquare
-                    key={square}
-                    square={square}
-                    piece={piece}
-                    isLightSquare={isLightSquare}
-                  />
-                </div>
+                {currentSquare !== square && piece !== 'empty' && <Piece piece={piece} />}
+
               </div>
             );
           })
@@ -138,15 +149,14 @@ const Draggable = () => {
       <div
         ref={elementRef}
         id="element"
-        className="card w-12 h-12 rounded-md cursor-pointer"
+        className="absolute card w-12 h-12 rounded-md cursor-pointer"
         style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-        onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        <div className='h-full pointer-events-none bg-blue-200'>
-          <Piece piece={'N'} />
+        <div className='h-full pointer-events-none'>
+          <Piece piece={draggingPiece} />
         </div>
       </div>
     </div>

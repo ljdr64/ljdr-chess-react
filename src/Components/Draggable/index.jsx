@@ -7,58 +7,41 @@ const Draggable = () => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [squarePieceDrop, setSquarePieceDrop] = useState([null, 'empty']);
   const [draggingPiece, setDraggingPiece] = useState('empty');
   const [currentSquare, setCurrentSquare] = useState(null);
-  const elementRef = useRef(null);
 
+  let squarePieceDrop = [null, 'empty']
   const squareRefs = {};
+  const pieceRefs = {};
   context.board2DArray.forEach((row, rowIndex) =>
     row.forEach((piece, colIndex) => {
       const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
       const rank = 8 - rowIndex;
       const square = `${file}${rank}`;
       squareRefs[square] = useRef(null);
+      pieceRefs[square] = useRef(null);
     })
   );
 
-  let dimension = { width: 0, height: 0 };
-  let positionElement = { x: 0, y: 0 };
-
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
-    const element = elementRef.current;
 
     setDraggingPiece(piece);
     setCurrentSquare(square);
-    dimension = { width: element.clientWidth, height: element.clientHeight };
-
-    const squareArea = {};
-    const squarePos = {};
-    squareArea[square] = squareRefs[square].current;
-    squarePos[square] = {
-      posX: squareArea[square].offsetLeft,
-      posY: squareArea[square].offsetTop,
-    }
-    const posX = element.offsetLeft;
-    const posY = element.offsetTop;
-    positionElement = { x: posX, y: posY };
-    console.log('Drag Start: ', positionElement);
 
     setIsDragging(true);
-    setPosition({ x: squarePos[square].posX - posX, y: squarePos[square].posY - posY });
+    setPosition({ x: 0, y: 0 });
   }
 
   function handleMouseMove(e) {
-    const element = elementRef.current;
-    dimension = { width: element.clientWidth, height: element.clientHeight };
-
-    const posX = element.offsetLeft;
-    const posY = element.offsetTop;
-
+    const pieceArea = pieceRefs[currentSquare].current;
+    const piecePos = {
+      posX: pieceArea.offsetLeft + 24,
+      posY: pieceArea.offsetTop + 24,
+    }
     if (isDragging) {
-      const newX = e.clientX - posX - dimension.width / 2;
-      const newY = e.clientY - posY - dimension.height / 2;
+      const newX = e.clientX - piecePos.posX;
+      const newY = e.clientY - piecePos.posY;
       setPosition({ x: newX, y: newY });
     }
   }
@@ -66,16 +49,15 @@ const Draggable = () => {
   function handleMouseUp() {
     if (!isDragging) return;
 
-    const element = elementRef.current;
-    dimension = { width: element.clientWidth, height: element.clientHeight };
-
-    const posX = element.offsetLeft;
-    const posY = element.offsetTop;
-    positionElement = { x: posX, y: posY };
-    console.log('Element: ', positionElement);
-
     const squareArea = {};
     const squarePos = {};
+
+    const pieceArea = pieceRefs[currentSquare].current;
+    const piecePos = {
+      posX: pieceArea.offsetLeft,
+      posY: pieceArea.offsetTop,
+    }
+
     context.board2DArray.forEach((row, rowIndex) =>
       row.forEach((piece, colIndex) => {
         const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
@@ -97,24 +79,24 @@ const Draggable = () => {
         const square = `${file}${rank}`;
 
         if (
-          position.y >= squarePos[square].posY - posY - 36 &&
-          position.y <= squarePos[square].posY - posY + 36 &&
-          position.x >= squarePos[square].posX - posX - 36 &&
-          position.x <= squarePos[square].posX - posX + 36
+          position.y >= squarePos[square].posY - piecePos.posY - 24 &&
+          position.y <= squarePos[square].posY - piecePos.posY + 24 &&
+          position.x >= squarePos[square].posX - piecePos.posX - 24 &&
+          position.x <= squarePos[square].posX - piecePos.posX + 24
         ) {
           setPosition({
-            x: squarePos[square].posX - posX,
-            y: squarePos[square].posY - posY
+            x: squarePos[square].posX - piecePos.posX,
+            y: squarePos[square].posY - piecePos.posY
           });
-          setSquarePieceDrop([square, piece])
+          squarePieceDrop = [square, piece];
           positionFound = true;
         }
       });
     });
 
     if (!positionFound) {
-      setPosition({ x: 0, y: 0 })
-      setSquarePieceDrop([null, 'empty'])
+      setPosition({ x: 0, y: 0 });
+      squarePieceDrop = [null, 'empty'];
     }
 
     console.log('Position: ', position, draggingPiece, currentSquare, squarePieceDrop);
@@ -130,34 +112,46 @@ const Draggable = () => {
             const rank = 8 - rowIndex;
             const square = `${file}${rank}`;
             const isLightSquare = (colIndex + rowIndex) % 2 === 0;
+            const isSelectSquare = currentSquare === square;
 
             return (
               <div
-                ref={squareRefs[square]}
                 key={square}
-                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${isLightSquare ? 'bg-amber-200' : 'bg-amber-700'
+                ref={squareRefs[square]}
+                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${isSelectSquare
+                  ? 'bg-green-200'
+                  : isLightSquare
+                    ? 'bg-amber-200'
+                    : 'bg-amber-700'
                   }`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
               >
-                {currentSquare !== square && piece !== 'empty' && <Piece piece={piece} />}
-
+                {currentSquare === square ?
+                  (<div
+                    ref={pieceRefs[square]}
+                    className="card w-12 h-12 cursor-pointer"
+                    style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                  >
+                    <div className='h-full pointer-events-none'>
+                      {currentSquare === square && piece !== 'empty' && <Piece piece={piece} />}
+                    </div>
+                  </div>) : (
+                    <div
+                      ref={pieceRefs[square]}
+                      className="card w-12 h-12 cursor-pointer"
+                    >
+                      <div className='h-full pointer-events-none'>
+                        {piece !== 'empty' && <Piece piece={piece} />}
+                      </div>
+                    </div>
+                  )}
               </div>
             );
           })
         )}
-      </div>
-      <div
-        ref={elementRef}
-        id="element"
-        className="absolute card w-12 h-12 rounded-md cursor-pointer"
-        style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        <div className='h-full pointer-events-none'>
-          <Piece piece={draggingPiece} />
-        </div>
       </div>
     </div>
   );

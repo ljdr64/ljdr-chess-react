@@ -9,7 +9,10 @@ const Draggable = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [draggingPiece, setDraggingPiece] = useState('empty');
-  const [currentSquare, setCurrentSquare] = useState(null);
+  const [currentSquare, setCurrentSquare] = useState(null);  
+  const [dragStartSquare, setDragStartSquare] = useState(null);
+  const [highlightedSquare, setHighlightedSquare] = useState(null);
+  const [possibleMoves, setPossibleMoves] = useState([]);
 
   let squarePieceDrop = [null, 'empty']
   const squareRefs = {};
@@ -111,6 +114,14 @@ const Draggable = () => {
 
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
+    
+    setDragStartSquare(square);
+    const moves = calculatePossibleMoves(
+      piece,
+      square,
+      context.board2DArray
+    );
+    setPossibleMoves(moves);
 
     const pieceMove = document.getElementById(square);
     if (pieceMove) {
@@ -119,7 +130,6 @@ const Draggable = () => {
       setPosition({ x: offsetX, y: offsetY });
       setIsDragging(true);
     }
-
     setDraggingPiece(piece);
     setCurrentSquare(square);
   }
@@ -197,6 +207,9 @@ const Draggable = () => {
               x: squarePos[square].posX - piecePos.posX,
               y: squarePos[square].posY - piecePos.posY
             });
+            setDragStartSquare(null);
+            setHighlightedSquare(null);
+            setPossibleMoves([]);
           } else {
             setPosition({ x: 0, y: 0 });
             squarePieceDrop = [null, 'empty'];
@@ -214,6 +227,35 @@ const Draggable = () => {
     setIsDragging(false);
   }
 
+  const getSquareClass = (
+    isLightSquare,
+    isHighlighted,
+    isDragStartSquare,
+    isPossibleMove,
+    isWhiteInCheck,
+    isBlackInCheck,
+    isPromotedWhitePawn,
+    isPromotedBlackPawn
+  ) => {
+    if (isPromotedWhitePawn || isPromotedBlackPawn) {
+      return 'bg-blue-500';
+    } else if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
+      return 'bg-red-400';
+    } else if ((isWhiteInCheck || isBlackInCheck) && !isLightSquare) {
+      return 'bg-red-500';
+    } else if (isHighlighted || isDragStartSquare) {
+      return 'bg-green-300';
+    } else if (isPossibleMove && isLightSquare) {
+      return 'bg-green-600';
+    } else if (isPossibleMove && !isLightSquare) {
+      return 'bg-green-700';
+    } else if (isLightSquare) {
+      return 'bg-amber-200';
+    } else {
+      return 'bg-amber-700';
+    }
+  };
+
   return (
     <div className="container mx-auto mt-4 select-none">
       <div className="flex flex-wrap w-96 cursor-pointer select-none">
@@ -223,18 +265,30 @@ const Draggable = () => {
             const rank = 8 - rowIndex;
             const square = `${file}${rank}`;
             const isLightSquare = (colIndex + rowIndex) % 2 === 0;
-            const isSelectSquare = currentSquare === square;
+            const isHighlighted = highlightedSquare === square;
+            const isPossibleMove = possibleMoves.some((item) => item === square);
+            const isWhiteInCheck = (piece === 'K' && context.isWhiteKingInCheck(context.board2DArray));
+            const isBlackInCheck = (piece === 'k' && context.isBlackKingInCheck(context.board2DArray));
+            const isPromotedWhitePawn = (piece === 'P' && rank === 8);
+            const isPromotedBlackPawn = (piece === 'p' && rank === 1);
+            const isDragStartSquare = dragStartSquare === square;
+
+            const squareClass = getSquareClass(
+              isLightSquare,
+              isHighlighted,
+              isDragStartSquare,
+              isPossibleMove,
+              isWhiteInCheck,
+              isBlackInCheck,
+              isPromotedWhitePawn,
+              isPromotedBlackPawn
+            );
 
             return (
               <div
                 key={square}
                 ref={squareRefs[square]}
-                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${isSelectSquare
-                  ? 'bg-green-200'
-                  : isLightSquare
-                    ? 'bg-amber-200'
-                    : 'bg-amber-700'
-                  }`}
+                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${squareClass}`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
               >
                 {currentSquare === square ?

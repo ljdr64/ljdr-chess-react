@@ -26,11 +26,16 @@ const Draggable = () => {
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
 
+    const pieceMove = document.getElementById(square);
+    if (pieceMove) {
+      const offsetX = e.clientX - pieceMove.getBoundingClientRect().left - 24;
+      const offsetY = e.clientY - pieceMove.getBoundingClientRect().top - 24;
+      setPosition({ x: offsetX, y: offsetY });
+      setIsDragging(true);
+    }
+
     setDraggingPiece(piece);
     setCurrentSquare(square);
-
-    setIsDragging(true);
-    setPosition({ x: 0, y: 0 });
   }
 
   function handleMouseMove(e) {
@@ -135,7 +140,9 @@ const Draggable = () => {
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
                   >
-                    <div className='h-full pointer-events-none'>
+                    <div
+                      id={square}
+                      className='h-full pointer-events-none'>
                       {currentSquare === square && piece !== 'empty' && <Piece piece={piece} />}
                     </div>
                   </div>) : (
@@ -143,7 +150,9 @@ const Draggable = () => {
                       ref={pieceRefs[square]}
                       className="card w-12 h-12 cursor-pointer"
                     >
-                      <div className='h-full pointer-events-none'>
+                      <div
+                        id={square}
+                        className='h-full pointer-events-none'>
                         {piece !== 'empty' && <Piece piece={piece} />}
                       </div>
                     </div>

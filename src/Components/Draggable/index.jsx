@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import Piece from '../Piece';
 import { ChessBoardContext } from '../../Context';
+import { isMoveLegal } from '../../ChessMoves';
 
 const Draggable = () => {
   const context = useContext(ChessBoardContext);
@@ -22,6 +23,91 @@ const Draggable = () => {
       pieceRefs[square] = useRef(null);
     })
   );
+
+  const sameType = (string1, string2) => {
+    return (
+      string1 !== 'empty' &&
+      string2 !== 'empty' &&
+      (/[a-z]/.test(string1) === /[a-z]/.test(string2) ||
+        /[A-Z]/.test(string1) === /[A-Z]/.test(string2))
+    );
+  };
+
+  const validateTurn = (piece) => {
+    return (
+      piece !== 'empty' &&
+      ((context.currentTurn === 'white' && piece === piece.toUpperCase()) ||
+        (context.currentTurn === 'black' && piece === piece.toLowerCase()))
+    );
+  };
+
+  const getPieceAtSquare = (square) => {
+    const file = square[0].charCodeAt(0) - 'a'.charCodeAt(0);
+    const rank = 8 - square[1];
+    const piece = context.board2DArray[rank][file];
+    return piece;
+  };
+
+  const calculatePossibleMoves = (piece, fromSquare, board) => {
+    const possibleMoves = [];
+    board.forEach((row, rowIndex) => {
+      row.forEach((targetPiece, colIndex) => {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
+        if (
+          !sameType(piece, targetPiece) &&
+          isMoveLegal(piece, square, fromSquare, board, context.fen)
+        ) {
+          possibleMoves.push(square);
+        }
+      });
+    });
+
+    return possibleMoves;
+  };
+
+  const formatNotation = (fromPiece, fromPosition, piece, square) => {
+    let newNotation = '';
+
+    if (piece === 'empty') {
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        newNotation = ` ${fromPiece.toUpperCase()}${square}\n`;
+      } else if (fromPiece === 'P' && fromPosition[0] === square[0]) {
+        newNotation = ` ${context.fullmoveNumber}. ${square}`;
+      } else if (fromPiece === 'P' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p' && fromPosition[0] === square[0]) {
+        newNotation = ` ${square}\n`;
+      } else if (fromPiece === 'p' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${fromPosition[0]}x${square}\n`;
+      } else {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPiece}${square}`;
+      }
+    } else {
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        newNotation = ` ${fromPiece.toUpperCase()}x${square}\n`;
+      } else if (fromPiece === 'P') {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p') {
+        newNotation = ` ${fromPosition[0]}x${square}\n`;
+      } else {
+        newNotation = ` ${context.fullmoveNumber}. ${fromPiece}x${square}`;
+      }
+    }
+
+    if (fromPiece === 'K' && fromPosition === 'e1') {
+      if (square === 'g1') { newNotation = ` ${context.fullmoveNumber}. 0-0` }
+      if (square === 'c1') { newNotation = ` ${context.fullmoveNumber}. 0-0-0` }
+    }
+
+    if (fromPiece === 'k' && fromPosition === 'e8') {
+      if (square === 'g8') { newNotation = ' 0-0\n' }
+      if (square === 'c8') { newNotation = ' 0-0-0\n' }
+    }
+
+    context.setNotation(prevNotation => prevNotation + newNotation);
+  };
 
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
@@ -89,12 +175,32 @@ const Draggable = () => {
           position.x >= squarePos[square].posX - piecePos.posX - 24 &&
           position.x <= squarePos[square].posX - piecePos.posX + 24
         ) {
-          setPosition({
-            x: squarePos[square].posX - piecePos.posX,
-            y: squarePos[square].posY - piecePos.posY
-          });
           squarePieceDrop = [square, piece];
           positionFound = true;
+          if (
+            !sameType(draggingPiece, squarePieceDrop[1]) &&
+            isMoveLegal(
+              draggingPiece,
+              squarePieceDrop[0],
+              currentSquare,
+              context.board2DArray,
+              context.fen)) {
+            console.log(
+              `${draggingPiece} ${currentSquare}-${squarePieceDrop[0]} ${context.currentTurn}`
+            );
+            formatNotation(draggingPiece, currentSquare, piece, squarePieceDrop[0])
+            context.handlePieceMove(currentSquare, squarePieceDrop[0]);
+            context.setCurrentTurn(
+              context.currentTurn === 'white' ? 'black' : 'white'
+            );
+            setPosition({
+              x: squarePos[square].posX - piecePos.posX,
+              y: squarePos[square].posY - piecePos.posY
+            });
+          } else {
+            setPosition({ x: 0, y: 0 });
+            squarePieceDrop = [null, 'empty'];
+          }
         }
       });
     });

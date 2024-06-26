@@ -137,6 +137,27 @@ const Draggable = () => {
     context.setNotation((prevNotation) => prevNotation + newNotation);
   };
 
+  function handleMouseClick(square) {
+    if (
+      square !== currentSquare &&
+      isMoveLegal(
+        draggingPiece,
+        square,
+        currentSquare,
+        context.board2DArray,
+        context.fen
+      )
+    ) {
+      context.handlePieceMove(currentSquare, square);
+      context.setCurrentTurn(
+        context.currentTurn === 'white' ? 'black' : 'white'
+      );
+      setDragStartSquare(null);
+      setHighlightedSquare(null);
+      setPossibleMoves([]);
+    }
+  }
+
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
 
@@ -359,6 +380,7 @@ const Draggable = () => {
                 ref={squareRefs[square]}
                 className={`w-12 h-12 flex items-center justify-center cursor-pointer ${squareClass}`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
+                onClick={() => handleMouseClick(square)}
               >
                 {currentSquare === square ? (
                   <div
@@ -372,9 +394,7 @@ const Draggable = () => {
                     onMouseLeave={handleMouseUp}
                   >
                     <div id={square} className="h-full pointer-events-none">
-                      {currentSquare === square && piece !== 'empty' && (
-                        <Piece piece={piece} />
-                      )}
+                      {piece !== 'empty' && <Piece piece={piece} />}
                     </div>
                   </div>
                 ) : (

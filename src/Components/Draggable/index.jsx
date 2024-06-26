@@ -15,6 +15,7 @@ const Draggable = () => {
   const [possibleMoves, setPossibleMoves] = useState([]);
 
   let squarePieceDrop = [null, 'empty'];
+
   const squareRefs = useMemo(() => {
     const refs = {};
     for (let rowIndex = 0; rowIndex < context.board2DArray.length; rowIndex++) {
@@ -152,6 +153,7 @@ const Draggable = () => {
     }
     setDraggingPiece(piece);
     setCurrentSquare(square);
+    setHighlightedSquare(null);
   }
 
   function handleMouseMove(e) {
@@ -160,6 +162,36 @@ const Draggable = () => {
       posX: pieceArea.offsetLeft + 24,
       posY: pieceArea.offsetTop + 24,
     };
+
+    const moves = calculatePossibleMoves(
+      draggingPiece,
+      currentSquare,
+      context.board2DArray
+    );
+    moves.push(currentSquare);
+
+    const squareArea = {};
+    const squarePos = {};
+
+    for (const item of moves) {
+      squareArea[item] = squareRefs[item].current;
+      squarePos[item] = {
+        posX: squareArea[item].offsetLeft,
+        posY: squareArea[item].offsetTop,
+      };
+      if (
+        e.clientX - squarePos[item].posX <= 47 &&
+        e.clientY - squarePos[item].posY <= 47 &&
+        e.clientX - squarePos[item].posX >= 0 &&
+        e.clientY - squarePos[item].posY >= 0
+      ) {
+        setHighlightedSquare(item);
+        break;
+      } else {
+        setHighlightedSquare(null);
+      }
+    }
+
     if (isDragging) {
       const newX = e.clientX - piecePos.posX;
       const newY = e.clientY - piecePos.posY;

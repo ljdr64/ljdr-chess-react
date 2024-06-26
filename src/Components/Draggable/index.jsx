@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Piece from '../Piece';
 import { ChessBoardContext } from '../../Context';
 import { isMoveLegal } from '../../ChessMoves';
@@ -137,6 +137,18 @@ const Draggable = () => {
     context.setNotation((prevNotation) => prevNotation + newNotation);
   };
 
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isDragging]);
+
   function handleMouseClick(square) {
     if (
       square !== currentSquare &&
@@ -214,8 +226,8 @@ const Draggable = () => {
     }
 
     if (isDragging) {
-      const newX = e.clientX - piecePos.posX;
-      const newY = e.clientY - piecePos.posY;
+      let newX = e.clientX - piecePos.posX;
+      let newY = e.clientY - piecePos.posY;
       setPosition({ x: newX, y: newY });
     }
   }
@@ -389,9 +401,7 @@ const Draggable = () => {
                     style={{
                       transform: `translate(${position.x}px, ${position.y}px)`,
                     }}
-                    onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
                   >
                     <div id={square} className="h-full pointer-events-none">
                       {piece !== 'empty' && <Piece piece={piece} />}

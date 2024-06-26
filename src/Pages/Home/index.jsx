@@ -2,11 +2,14 @@ import Draggable from '../../Components/Draggable';
 import Layout from '../../Components/Layout';
 
 function Home() {
-  return <Layout>Home 
-      <div className='flex'>
+  return (
+    <Layout>
+      Home
+      <div className="flex">
         <Draggable />
       </div>
-    </Layout>;
+    </Layout>
+  );
 }
 
 export default Home;

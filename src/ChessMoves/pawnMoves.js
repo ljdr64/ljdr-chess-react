@@ -21,12 +21,18 @@ export function getPawnMoves(fromPiece, square, fromPosition, board, fen) {
     if (board[rank][file] === 'empty') {
       if (
         file === fromFile &&
-        (fromRank - rank === 1 || (fromRank === 6 && fromRank - rank === 2))
+        (fromRank - rank === 1 ||
+          (board[5][file] === 'empty' &&
+            fromRank === 6 &&
+            fromRank - rank === 2))
       ) {
         legalMoves = true;
       }
-      if (Math.abs(file - fromFile) === 1 && fromRank - rank === 1 && 
-      getEnPassantSquare(fen) === square) {
+      if (
+        Math.abs(file - fromFile) === 1 &&
+        fromRank - rank === 1 &&
+        getEnPassantSquare(fen) === square
+      ) {
         legalMoves = true;
       }
     } else if (Math.abs(file - fromFile) === 1 && fromRank - rank === 1) {
@@ -38,12 +44,18 @@ export function getPawnMoves(fromPiece, square, fromPosition, board, fen) {
     if (board[rank][file] === 'empty') {
       if (
         file === fromFile &&
-        (rank - fromRank === 1 || (fromRank === 1 && rank - fromRank === 2))
+        (rank - fromRank === 1 ||
+          (board[2][file] === 'empty' &&
+            fromRank === 1 &&
+            rank - fromRank === 2))
       ) {
         legalMoves = true;
       }
-      if (Math.abs(file - fromFile) === 1 && rank - fromRank === 1 && 
-      getEnPassantSquare(fen) === square) {
+      if (
+        Math.abs(file - fromFile) === 1 &&
+        rank - fromRank === 1 &&
+        getEnPassantSquare(fen) === square
+      ) {
         legalMoves = true;
       }
     } else if (Math.abs(file - fromFile) === 1 && rank - fromRank === 1) {

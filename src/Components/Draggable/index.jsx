@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import Piece from '../Piece';
 import { ChessBoardContext } from '../../Context';
 import { isMoveLegal } from '../../ChessMoves';
@@ -9,23 +9,39 @@ const Draggable = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [draggingPiece, setDraggingPiece] = useState('empty');
-  const [currentSquare, setCurrentSquare] = useState(null);  
+  const [currentSquare, setCurrentSquare] = useState(null);
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [highlightedSquare, setHighlightedSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
 
-  let squarePieceDrop = [null, 'empty']
-  const squareRefs = {};
-  const pieceRefs = {};
-  context.board2DArray.forEach((row, rowIndex) =>
-    row.forEach((piece, colIndex) => {
-      const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
-      const rank = 8 - rowIndex;
-      const square = `${file}${rank}`;
-      squareRefs[square] = useRef(null);
-      pieceRefs[square] = useRef(null);
-    })
-  );
+  let squarePieceDrop = [null, 'empty'];
+  const squareRefs = useMemo(() => {
+    const refs = {};
+    for (let rowIndex = 0; rowIndex < context.board2DArray.length; rowIndex++) {
+      const row = context.board2DArray[rowIndex];
+      for (let colIndex = 0; colIndex < row.length; colIndex++) {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
+        refs[square] = React.createRef();
+      }
+    }
+    return refs;
+  }, [context.board2DArray]);
+
+  const pieceRefs = useMemo(() => {
+    const refs = {};
+    for (let rowIndex = 0; rowIndex < context.board2DArray.length; rowIndex++) {
+      const row = context.board2DArray[rowIndex];
+      for (let colIndex = 0; colIndex < row.length; colIndex++) {
+        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+        const rank = 8 - rowIndex;
+        const square = `${file}${rank}`;
+        refs[square] = React.createRef();
+      }
+    }
+    return refs;
+  }, [context.board2DArray]);
 
   const sameType = (string1, string2) => {
     return (
@@ -100,27 +116,31 @@ const Draggable = () => {
     }
 
     if (fromPiece === 'K' && fromPosition === 'e1') {
-      if (square === 'g1') { newNotation = ` ${context.fullmoveNumber}. 0-0` }
-      if (square === 'c1') { newNotation = ` ${context.fullmoveNumber}. 0-0-0` }
+      if (square === 'g1') {
+        newNotation = ` ${context.fullmoveNumber}. 0-0`;
+      }
+      if (square === 'c1') {
+        newNotation = ` ${context.fullmoveNumber}. 0-0-0`;
+      }
     }
 
     if (fromPiece === 'k' && fromPosition === 'e8') {
-      if (square === 'g8') { newNotation = ' 0-0\n' }
-      if (square === 'c8') { newNotation = ' 0-0-0\n' }
+      if (square === 'g8') {
+        newNotation = ' 0-0\n';
+      }
+      if (square === 'c8') {
+        newNotation = ' 0-0-0\n';
+      }
     }
 
-    context.setNotation(prevNotation => prevNotation + newNotation);
+    context.setNotation((prevNotation) => prevNotation + newNotation);
   };
 
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
-    
+
     setDragStartSquare(square);
-    const moves = calculatePossibleMoves(
-      piece,
-      square,
-      context.board2DArray
-    );
+    const moves = calculatePossibleMoves(piece, square, context.board2DArray);
     setPossibleMoves(moves);
 
     const pieceMove = document.getElementById(square);
@@ -139,7 +159,7 @@ const Draggable = () => {
     const piecePos = {
       posX: pieceArea.offsetLeft + 24,
       posY: pieceArea.offsetTop + 24,
-    }
+    };
     if (isDragging) {
       const newX = e.clientX - piecePos.posX;
       const newY = e.clientY - piecePos.posY;
@@ -157,7 +177,7 @@ const Draggable = () => {
     const piecePos = {
       posX: pieceArea.offsetLeft,
       posY: pieceArea.offsetTop,
-    }
+    };
 
     context.board2DArray.forEach((row, rowIndex) =>
       row.forEach((piece, colIndex) => {
@@ -168,7 +188,7 @@ const Draggable = () => {
         squarePos[square] = {
           posX: squareArea[square].offsetLeft,
           posY: squareArea[square].offsetTop,
-        }
+        };
       })
     );
 
@@ -194,18 +214,25 @@ const Draggable = () => {
               squarePieceDrop[0],
               currentSquare,
               context.board2DArray,
-              context.fen)) {
+              context.fen
+            )
+          ) {
             console.log(
               `${draggingPiece} ${currentSquare}-${squarePieceDrop[0]} ${context.currentTurn}`
             );
-            formatNotation(draggingPiece, currentSquare, piece, squarePieceDrop[0])
+            formatNotation(
+              draggingPiece,
+              currentSquare,
+              piece,
+              squarePieceDrop[0]
+            );
             context.handlePieceMove(currentSquare, squarePieceDrop[0]);
             context.setCurrentTurn(
               context.currentTurn === 'white' ? 'black' : 'white'
             );
             setPosition({
               x: squarePos[square].posX - piecePos.posX,
-              y: squarePos[square].posY - piecePos.posY
+              y: squarePos[square].posY - piecePos.posY,
             });
             setDragStartSquare(null);
             setHighlightedSquare(null);
@@ -223,7 +250,13 @@ const Draggable = () => {
       squarePieceDrop = [null, 'empty'];
     }
 
-    console.log('Position: ', position, draggingPiece, currentSquare, squarePieceDrop);
+    console.log(
+      'Position: ',
+      position,
+      draggingPiece,
+      currentSquare,
+      squarePieceDrop
+    );
     setIsDragging(false);
   }
 
@@ -266,11 +299,15 @@ const Draggable = () => {
             const square = `${file}${rank}`;
             const isLightSquare = (colIndex + rowIndex) % 2 === 0;
             const isHighlighted = highlightedSquare === square;
-            const isPossibleMove = possibleMoves.some((item) => item === square);
-            const isWhiteInCheck = (piece === 'K' && context.isWhiteKingInCheck(context.board2DArray));
-            const isBlackInCheck = (piece === 'k' && context.isBlackKingInCheck(context.board2DArray));
-            const isPromotedWhitePawn = (piece === 'P' && rank === 8);
-            const isPromotedBlackPawn = (piece === 'p' && rank === 1);
+            const isPossibleMove = possibleMoves.some(
+              (item) => item === square
+            );
+            const isWhiteInCheck =
+              piece === 'K' && context.isWhiteKingInCheck(context.board2DArray);
+            const isBlackInCheck =
+              piece === 'k' && context.isBlackKingInCheck(context.board2DArray);
+            const isPromotedWhitePawn = piece === 'P' && rank === 8;
+            const isPromotedBlackPawn = piece === 'p' && rank === 1;
             const isDragStartSquare = dragStartSquare === square;
 
             const squareClass = getSquareClass(
@@ -291,32 +328,33 @@ const Draggable = () => {
                 className={`w-12 h-12 flex items-center justify-center cursor-pointer ${squareClass}`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
               >
-                {currentSquare === square ?
-                  (<div
+                {currentSquare === square ? (
+                  <div
                     ref={pieceRefs[square]}
                     className="card w-12 h-12 cursor-pointer"
-                    style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+                    style={{
+                      transform: `translate(${position.x}px, ${position.y}px)`,
+                    }}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
                   >
-                    <div
-                      id={square}
-                      className='h-full pointer-events-none'>
-                      {currentSquare === square && piece !== 'empty' && <Piece piece={piece} />}
+                    <div id={square} className="h-full pointer-events-none">
+                      {currentSquare === square && piece !== 'empty' && (
+                        <Piece piece={piece} />
+                      )}
                     </div>
-                  </div>) : (
-                    <div
-                      ref={pieceRefs[square]}
-                      className="card w-12 h-12 cursor-pointer"
-                    >
-                      <div
-                        id={square}
-                        className='h-full pointer-events-none'>
-                        {piece !== 'empty' && <Piece piece={piece} />}
-                      </div>
+                  </div>
+                ) : (
+                  <div
+                    ref={pieceRefs[square]}
+                    className="card w-12 h-12 cursor-pointer"
+                  >
+                    <div id={square} className="h-full pointer-events-none">
+                      {piece !== 'empty' && <Piece piece={piece} />}
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
             );
           })

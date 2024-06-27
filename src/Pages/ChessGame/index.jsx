@@ -7,21 +7,26 @@ import ChessNotation from '../../Components/ChessNotation';
 function ChessGame() {
   const context = useContext(ChessBoardContext);
 
+  const cleanedNotation = context.notation.replace(/\n/g, '').trim();
+
   return (
-    <Layout>      
+    <Layout>
       <h1 className="font-bold text-[40px] mb-10">ChessGame</h1>
       <div className="justify-center">
         <div className="flex">
           <div className="bg-gray-200 p-8 rounded-lg shadow-lg">
             <ChessBoard />
-          </div>          
+          </div>
           <div className="bg-gray-200 p-8 rounded-lg shadow-lg">
             <ChessNotation />
           </div>
         </div>
-        <div className="bg-gray-200 max-w-[672px] p-8 rounded-lg shadow-lg">
-          <pre className="text-center text-sm bg-white p-2 overflow-x-scroll">
+        <div className=" bg-gray-200 w-full max-w-[752px] p-8 rounded-lg shadow-lg">
+          <pre className="whitespace-pre-wrap border border-gray-600 shadow-lg text-sm bg-white p-2 overflow-scroll">
             {context.fen}
+          </pre>
+          <pre className="whitespace-pre-wrap border-b border-x border-gray-600 shadow-lg text-sm bg-white p-2">
+            {cleanedNotation ? cleanedNotation : ' '}
           </pre>
         </div>
       </div>

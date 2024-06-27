@@ -214,7 +214,7 @@ const ChessBoard = () => {
     setHighlightedSquare(null);
   }
 
-  function handleMouseMove(e, item) {
+  function handleMouseMove(e) {
     const pieceArea = pieceRefs[currentSquare].current;
     const piecePos = {
       posX: pieceArea.offsetLeft + 24,
@@ -394,7 +394,7 @@ const ChessBoard = () => {
   };
 
   return (
-    <div className="container mx-auto mt-4 select-none">
+    <div className="container mx-auto select-none">
       <div className="flex flex-wrap w-96 cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {

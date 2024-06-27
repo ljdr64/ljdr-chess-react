@@ -1,11 +1,21 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { ChessBoardContext } from '../../Context';
 
 const ChessNotation = () => {
   const context = useContext(ChessBoardContext);
+  const notationRef = useRef(null);
+
+  useEffect(() => {
+    if (notationRef.current) {
+      notationRef.current.scrollTop = notationRef.current.scrollHeight;
+    }
+  }, [context.notation]);
 
   return (
-    <div className="w-60 h-96 flex flex-col bg-white overflow-y-scroll">
+    <div
+      ref={notationRef}
+      className="w-full h-[83px] lg:w-60 lg:h-96 flex flex-col bg-white overflow-y-scroll"
+    >
       {context.notation.split('\n').map((line, index) => {
         const moves = line.split(' ');
         const moveNumber = index + 1;

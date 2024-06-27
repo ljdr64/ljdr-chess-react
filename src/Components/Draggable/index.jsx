@@ -177,7 +177,18 @@ const Draggable = () => {
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
 
-    console.log('Promote: ', piece, square);
+    if (possibleMoves.some((item) => item === square)) {
+      context.handlePieceMove(currentSquare, square);
+      context.setCurrentTurn(
+        context.currentTurn === 'white' ? 'black' : 'white'
+      );
+      setDragStartSquare(null);
+      setHighlightedSquare(null);
+      setPossibleMoves([]);
+      return;
+    }
+
+    console.log('Promote: ', piece, currentSquare, square);
     if (
       (piece === 'P' && square[1] === '8') ||
       (piece === 'p' && square[1] === '1')
@@ -203,7 +214,7 @@ const Draggable = () => {
     setHighlightedSquare(null);
   }
 
-  function handleMouseMove(e) {
+  function handleMouseMove(e, item) {
     const pieceArea = pieceRefs[currentSquare].current;
     const piecePos = {
       posX: pieceArea.offsetLeft + 24,
@@ -372,9 +383,9 @@ const Draggable = () => {
     } else if (isHighlighted || isDragStartSquare) {
       return 'bg-green-300';
     } else if (isPossibleMove && isLightSquare) {
-      return 'bg-green-600';
+      return 'bg-green-600 hover:bg-green-300';
     } else if (isPossibleMove && !isLightSquare) {
-      return 'bg-green-700';
+      return 'bg-green-700 hover:bg-green-300';
     } else if (isLightSquare) {
       return 'bg-amber-200';
     } else {

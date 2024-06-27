@@ -36,7 +36,10 @@ const Piece = ({ piece, onClick }) => {
   const svgUrl = `/assets/svg/${symbolId}.svg`;
 
   return (
-    <div className="w-full h-full flex items-center justify-center select-none" onClick={onClick}>
+    <div
+      className="w-full h-full flex items-center justify-center select-none"
+      onClick={onClick}
+    >
       <img src={svgUrl} alt={`Chess piece ${piece}`} className="w-12 h-12" />
     </div>
   );

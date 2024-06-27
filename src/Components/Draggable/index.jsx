@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Piece from '../Piece';
 import { ChessBoardContext } from '../../Context';
 import { isMoveLegal } from '../../ChessMoves';
+import PromotionPawn from '../PromotionPawn';
 
 const Draggable = () => {
   const context = useContext(ChessBoardContext);
@@ -172,6 +173,16 @@ const Draggable = () => {
 
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
+
+    console.log('Promote: ', draggingPiece, square, piece);
+    if (
+      (piece === 'P' && square[1] === '8') ||
+      (piece === 'p' && square[1] === '1')
+    ) {
+      setPosition({ x: 0, y: 0 });
+      setIsDragging(false);
+      return;
+    }
 
     setDragStartSquare(square);
     const moves = calculatePossibleMoves(piece, square, context.board2DArray);
@@ -395,27 +406,51 @@ const Draggable = () => {
                 onClick={() => handleMouseClick(square)}
               >
                 {currentSquare === square ? (
-                  <div
-                    ref={pieceRefs[square]}
-                    className="card w-12 h-12 cursor-pointer"
-                    style={{
-                      transform: `translate(${position.x}px, ${position.y}px)`,
-                    }}
-                    onMouseUp={handleMouseUp}
-                  >
-                    <div id={square} className="h-full pointer-events-none">
-                      {piece !== 'empty' && <Piece piece={piece} />}
+                  <>
+                    {isPromotedWhitePawn && piece === 'P' && (
+                      <div className="shadow-lg bg-white h-auto mt-[168px] z-20">
+                        <PromotionPawn piece={piece} square={square} />
+                      </div>
+                    )}
+                    {isPromotedBlackPawn && piece === 'p' && (
+                      <div className="shadow-lg bg-white h-auto mb-[168px] z-20">
+                        <PromotionPawn piece={piece} square={square} />
+                      </div>
+                    )}
+                    <div
+                      ref={pieceRefs[square]}
+                      className="card w-12 h-12 cursor-pointer"
+                      style={{
+                        transform: `translate(${position.x}px, ${position.y}px)`,
+                      }}
+                      onMouseUp={handleMouseUp}
+                    >
+                      <div id={square} className="h-full pointer-events-none">
+                        {piece !== 'empty' && <Piece piece={piece} />}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  <div
-                    ref={pieceRefs[square]}
-                    className="card w-12 h-12 cursor-pointer"
-                  >
-                    <div id={square} className="h-full pointer-events-none">
-                      {piece !== 'empty' && <Piece piece={piece} />}
+                  <>
+                    {isPromotedWhitePawn && piece === 'P' && (
+                      <div className="shadow-lg bg-white h-auto mt-[168px] z-20">
+                        <PromotionPawn piece={piece} square={square} />
+                      </div>
+                    )}
+                    {isPromotedBlackPawn && piece === 'p' && (
+                      <div className="shadow-lg bg-white h-auto mb-[168px] z-20">
+                        <PromotionPawn piece={piece} square={square} />
+                      </div>
+                    )}
+                    <div
+                      ref={pieceRefs[square]}
+                      className="card w-12 h-12 cursor-pointer"
+                    >
+                      <div id={square} className="h-full pointer-events-none">
+                        {piece !== 'empty' && <Piece piece={piece} />}
+                      </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             );

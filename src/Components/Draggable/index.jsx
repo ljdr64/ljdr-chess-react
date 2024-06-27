@@ -141,12 +141,15 @@ const Draggable = () => {
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('touchmove', handleMove);
     } else {
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleMove);
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleMove);
     };
   }, [isDragging]);
 
@@ -174,7 +177,7 @@ const Draggable = () => {
   function handleMouseDown(e, square, piece) {
     if (piece === 'empty') return;
 
-    console.log('Promote: ', draggingPiece, square, piece);
+    console.log('Promote: ', piece, square);
     if (
       (piece === 'P' && square[1] === '8') ||
       (piece === 'p' && square[1] === '1')
@@ -336,6 +339,20 @@ const Draggable = () => {
     setIsDragging(false);
   }
 
+  const handleStart = (e, square, piece) => {
+    const event = e.type === 'mousedown' ? e : e.touches[0];
+    handleMouseDown(event, square, piece);
+  };
+
+  const handleMove = (e) => {
+    const event = e.type === 'mousedown' ? e : e.touches[0];
+    handleMouseMove(event);
+  };
+
+  const handleEnd = () => {
+    handleMouseUp();
+  };
+
   const getSquareClass = (
     isLightSquare,
     isHighlighted,
@@ -403,6 +420,7 @@ const Draggable = () => {
                 ref={squareRefs[square]}
                 className={`w-12 h-12 flex items-center justify-center cursor-pointer ${squareClass}`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
+                onTouchStart={(e) => handleStart(e, square, piece)}
                 onClick={() => handleMouseClick(square)}
               >
                 {currentSquare === square ? (
@@ -424,6 +442,7 @@ const Draggable = () => {
                         transform: `translate(${position.x}px, ${position.y}px)`,
                       }}
                       onMouseUp={handleMouseUp}
+                      onTouchEnd={handleEnd}
                     >
                       <div id={square} className="h-full pointer-events-none">
                         {piece !== 'empty' && <Piece piece={piece} />}

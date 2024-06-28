@@ -9,7 +9,7 @@ export default {
         'circle-check':
           'radial-gradient(circle, rgba(210, 0, 0, 0.8) 40%, rgba(210, 0, 0, 0.6) 60%, transparent 100%)',
         'circle-take-piece':
-          'radial-gradient(circle, transparent 75%, #16a34a 70%)',
+          'radial-gradient(circle, transparent 75%, #16a34a 80%)',
         'circle-promotion-pawn':
           'radial-gradient(circle, rgba(156, 163, 175, 0.8) 50%, rgba(156, 163, 175, 0.6) 65%, transparent 100%)',
       },

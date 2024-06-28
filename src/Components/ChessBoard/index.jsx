@@ -170,6 +170,7 @@ const ChessBoard = () => {
       context.setCurrentTurn(
         context.currentTurn === 'white' ? 'black' : 'white'
       );
+      formatNotation(draggingPiece, currentSquare, 'empty', square);
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -188,6 +189,7 @@ const ChessBoard = () => {
       context.setCurrentTurn(
         context.currentTurn === 'white' ? 'black' : 'white'
       );
+      formatNotation(draggingPiece, currentSquare, piece, square);
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -381,6 +383,7 @@ const ChessBoard = () => {
     isHighlighted,
     isDragStartSquare,
     isPossibleMove,
+    isPossibleTake,
     isWhiteInCheck,
     isBlackInCheck,
     isPromotedWhitePawn,
@@ -389,15 +392,19 @@ const ChessBoard = () => {
     if (isPromotedWhitePawn || isPromotedBlackPawn) {
       return 'bg-blue-500';
     } else if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
-      return 'bg-red-400';
+      return 'bg-amber-200 bg-circle-check';
     } else if ((isWhiteInCheck || isBlackInCheck) && !isLightSquare) {
-      return 'bg-red-500';
+      return 'bg-amber-500 bg-circle-check';
     } else if (isHighlighted || isDragStartSquare) {
-      return 'bg-green-300';
-    } else if (isPossibleMove && isLightSquare) {
-      return 'bg-green-600 hover:bg-green-300';
-    } else if (isPossibleMove && !isLightSquare) {
-      return 'bg-green-700 hover:bg-green-300';
+      return 'bg-green-600';
+    } else if (isPossibleMove && isLightSquare && !isPossibleTake) {
+      return 'bg-amber-200 bg-circle-in-center hover:bg-green-600';
+    } else if (isPossibleMove && !isLightSquare && !isPossibleTake) {
+      return 'bg-amber-700 bg-circle-in-center hover:bg-green-600';
+    } else if (isPossibleTake && isLightSquare) {
+      return 'bg-amber-200 bg-circle-take-piece hover:bg-green-600';
+    } else if (isPossibleTake && !isLightSquare) {
+      return 'bg-amber-700 bg-circle-take-piece hover:bg-green-600';
     } else if (isLightSquare) {
       return 'bg-amber-200';
     } else {
@@ -418,6 +425,7 @@ const ChessBoard = () => {
             const isPossibleMove = possibleMoves.some(
               (item) => item === square
             );
+            const isPossibleTake = isPossibleMove && piece !== 'empty';
             const isWhiteInCheck =
               piece === 'K' && context.isWhiteKingInCheck(context.board2DArray);
             const isBlackInCheck =
@@ -431,6 +439,7 @@ const ChessBoard = () => {
               isHighlighted,
               isDragStartSquare,
               isPossibleMove,
+              isPossibleTake,
               isWhiteInCheck,
               isBlackInCheck,
               isPromotedWhitePawn,

@@ -13,18 +13,34 @@ const PromotionPawn = ({ piece, square }) => {
   return (
     <>
       {piece === 'P' ? (
-        <div className="flex flex-col w-12 z-20 bg-gray-300">
-          <Piece piece={'Q'} onClick={() => handlePieceClick('Q')} />
-          <Piece piece={'N'} onClick={() => handlePieceClick('N')} />
-          <Piece piece={'R'} onClick={() => handlePieceClick('R')} />
-          <Piece piece={'B'} onClick={() => handlePieceClick('B')} />
+        <div className="flex flex-col w-12 z-20 bg-white">
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'Q'} onClick={() => handlePieceClick('Q')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'N'} onClick={() => handlePieceClick('N')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'R'} onClick={() => handlePieceClick('R')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'B'} onClick={() => handlePieceClick('B')} />
+          </div>
         </div>
       ) : (
-        <div className="flex flex-col w-12 z-20 bg-gray-300">
-          <Piece piece={'b'} onClick={() => handlePieceClick('b')} />
-          <Piece piece={'r'} onClick={() => handlePieceClick('r')} />
-          <Piece piece={'n'} onClick={() => handlePieceClick('n')} />
-          <Piece piece={'q'} onClick={() => handlePieceClick('q')} />
+        <div className="flex flex-col w-12 z-20 bg-white">
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'b'} onClick={() => handlePieceClick('b')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'r'} onClick={() => handlePieceClick('r')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'n'} onClick={() => handlePieceClick('n')} />
+          </div>
+          <div className="bg-circle-promotion-pawn hover:bg-orange-400">
+            <Piece piece={'q'} onClick={() => handlePieceClick('q')} />
+          </div>
         </div>
       )}
     </>

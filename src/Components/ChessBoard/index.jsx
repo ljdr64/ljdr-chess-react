@@ -4,6 +4,7 @@ import Piece from '../Piece';
 import PromotionPawn from '../PromotionPawn';
 import { isMoveLegal } from '../../ChessMoves';
 import { formatNotation } from '../../utils/formatNotation';
+import './styles.css';
 
 const ChessBoard = () => {
   const context = useContext(ChessBoardContext);
@@ -350,23 +351,23 @@ const ChessBoard = () => {
     if (isPromotedWhitePawn || isPromotedBlackPawn) {
       return 'bg-blue-500';
     } else if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
-      return 'bg-amber-200 bg-circle-check';
+      return 'light-square bg-circle-check';
     } else if ((isWhiteInCheck || isBlackInCheck) && !isLightSquare) {
-      return 'bg-amber-500 bg-circle-check';
+      return 'dark-square bg-circle-check';
     } else if (isHighlighted || isDragStartSquare) {
-      return 'bg-green-600';
+      return 'bg-green-700';
     } else if (isPossibleMove && isLightSquare && !isPossibleTake) {
-      return 'bg-amber-200 bg-circle-in-center hover:bg-green-600';
+      return 'light-square bg-circle-in-center hover:bg-green-700';
     } else if (isPossibleMove && !isLightSquare && !isPossibleTake) {
-      return 'bg-amber-700 bg-circle-in-center hover:bg-green-600';
+      return 'dark-square bg-circle-in-center hover:bg-green-700';
     } else if (isPossibleTake && isLightSquare) {
-      return 'bg-amber-200 bg-circle-take-piece hover:bg-green-600';
+      return 'light-square bg-circle-take-piece hover:bg-green-700';
     } else if (isPossibleTake && !isLightSquare) {
-      return 'bg-amber-700 bg-circle-take-piece hover:bg-green-600';
+      return 'dark-square bg-circle-take-piece hover:bg-green-700';
     } else if (isLightSquare) {
-      return 'bg-amber-200';
+      return 'light-square';
     } else {
-      return 'bg-amber-700';
+      return 'dark-square';
     }
   };
 

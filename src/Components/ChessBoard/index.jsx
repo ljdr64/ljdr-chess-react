@@ -140,8 +140,10 @@ const ChessBoard = () => {
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('touchmove', handleMove);
+      document.addEventListener('mousemove', handleMouseMove, {
+        passive: false,
+      });
+      document.addEventListener('touchmove', handleMove, { passive: false });
     } else {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('touchmove', handleMove);
@@ -175,6 +177,10 @@ const ChessBoard = () => {
   }
 
   function handleMouseDown(e, square, piece) {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+
     if (piece === 'empty') return;
 
     if (possibleMoves.some((item) => item === square)) {
@@ -238,10 +244,10 @@ const ChessBoard = () => {
         posY: squareArea[item].offsetTop,
       };
       if (
-        e.clientX - squarePos[item].posX <= 47 &&
-        e.clientY - squarePos[item].posY <= 47 &&
-        e.clientX - squarePos[item].posX >= 0 &&
-        e.clientY - squarePos[item].posY >= 0
+        e.clientX - squarePos[item].posX + window.scrollX <= 47 &&
+        e.clientY - squarePos[item].posY + window.scrollY <= 47 &&
+        e.clientX - squarePos[item].posX + window.scrollX >= 0 &&
+        e.clientY - squarePos[item].posY + window.scrollY >= 0
       ) {
         setHighlightedSquare(item);
         break;
@@ -251,8 +257,8 @@ const ChessBoard = () => {
     }
 
     if (isDragging) {
-      let newX = e.clientX - piecePos.posX;
-      let newY = e.clientY - piecePos.posY;
+      let newX = e.clientX - piecePos.posX + window.scrollX;
+      let newY = e.clientY - piecePos.posY + window.scrollY;
       setPosition({ x: newX, y: newY });
     }
   }
@@ -351,11 +357,17 @@ const ChessBoard = () => {
   }
 
   const handleStart = (e, square, piece) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const event = e.type === 'mousedown' ? e : e.touches[0];
     handleMouseDown(event, square, piece);
   };
 
   const handleMove = (e) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const event = e.type === 'mousedown' ? e : e.touches[0];
     handleMouseMove(event);
   };
@@ -394,7 +406,7 @@ const ChessBoard = () => {
   };
 
   return (
-    <div className="container mx-auto select-none">
+    <div className="board-container mx-auto select-none">
       <div className="flex flex-wrap w-96 cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {

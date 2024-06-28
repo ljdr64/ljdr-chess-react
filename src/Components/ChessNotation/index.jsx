@@ -21,7 +21,6 @@ const ChessNotation = () => {
         const moveNumber = index + 1;
         const whiteMove = moves.length > 1 ? moves[2] : '';
         const blackMove = moves.length > 2 ? moves[3] : '';
-        console.log(moves);
 
         return (
           whiteMove && (

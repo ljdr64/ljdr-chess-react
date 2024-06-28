@@ -4,6 +4,8 @@ import Piece from '../Piece';
 import PromotionPawn from '../PromotionPawn';
 import { isMoveLegal } from '../../ChessMoves';
 import { formatNotation } from '../../utils/formatNotation';
+import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
+import { sameType } from '../../utils/sameType';
 import './styles.css';
 
 const ChessBoard = () => {
@@ -47,34 +49,6 @@ const ChessBoard = () => {
     return refs;
   }, [context.board2DArray]);
 
-  const sameType = (string1, string2) => {
-    return (
-      string1 !== 'empty' &&
-      string2 !== 'empty' &&
-      (/[a-z]/.test(string1) === /[a-z]/.test(string2) ||
-        /[A-Z]/.test(string1) === /[A-Z]/.test(string2))
-    );
-  };
-
-  const calculatePossibleMoves = (piece, fromSquare, board) => {
-    const possibleMoves = [];
-    board.forEach((row, rowIndex) => {
-      row.forEach((targetPiece, colIndex) => {
-        const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
-        const rank = 8 - rowIndex;
-        const square = `${file}${rank}`;
-        if (
-          !sameType(piece, targetPiece) &&
-          isMoveLegal(piece, square, fromSquare, board, context.fen)
-        ) {
-          possibleMoves.push(square);
-        }
-      });
-    });
-
-    return possibleMoves;
-  };
-
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove, {
@@ -114,7 +88,9 @@ const ChessBoard = () => {
             currentSquare,
             'empty',
             square,
-            context.fullmoveNumber
+            context.fullmoveNumber,
+            context.board2DArray,
+            context.fen
           )
       );
       setDragStartSquare(null);
@@ -142,7 +118,9 @@ const ChessBoard = () => {
             currentSquare,
             piece,
             square,
-            context.fullmoveNumber
+            context.fullmoveNumber,
+            context.board2DArray,
+            context.fen
           )
       );
       setDragStartSquare(null);
@@ -162,7 +140,12 @@ const ChessBoard = () => {
     }
 
     setDragStartSquare(square);
-    const moves = calculatePossibleMoves(piece, square, context.board2DArray);
+    const moves = calculatePossibleMoves(
+      piece,
+      square,
+      context.board2DArray,
+      context.fen
+    );
     setPossibleMoves(moves);
 
     const pieceMove = document.getElementById(square);
@@ -187,7 +170,8 @@ const ChessBoard = () => {
     const moves = calculatePossibleMoves(
       draggingPiece,
       currentSquare,
-      context.board2DArray
+      context.board2DArray,
+      context.fen
     );
     moves.push(currentSquare);
 
@@ -280,7 +264,9 @@ const ChessBoard = () => {
                   currentSquare,
                   piece,
                   squarePieceDrop[0],
-                  context.fullmoveNumber
+                  context.fullmoveNumber,
+                  context.board2DArray,
+                  context.fen
                 )
             );
             context.handlePieceMove(currentSquare, squarePieceDrop[0]);

@@ -6,6 +6,7 @@ import { isMoveLegal } from '../../ChessMoves';
 import { formatNotation } from '../../utils/formatNotation';
 import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
 import { sameType } from '../../utils/sameType';
+import { isBlackKingInCheck, isWhiteKingInCheck } from '../../KingInCheck';
 import './styles.css';
 
 const ChessBoard = () => {
@@ -77,7 +78,6 @@ const ChessBoard = () => {
         context.fen
       )
     ) {
-      context.handlePieceMove(currentSquare, square);
       context.setCurrentTurn(
         context.currentTurn === 'white' ? 'black' : 'white'
       );
@@ -93,6 +93,7 @@ const ChessBoard = () => {
             context.fen
           )
       );
+      context.handlePieceMove(currentSquare, square);
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -107,7 +108,6 @@ const ChessBoard = () => {
     if (piece === 'empty') return;
 
     if (possibleMoves.some((item) => item === square)) {
-      context.handlePieceMove(currentSquare, square);
       context.setCurrentTurn(
         context.currentTurn === 'white' ? 'black' : 'white'
       );
@@ -123,6 +123,7 @@ const ChessBoard = () => {
             context.fen
           )
       );
+      context.handlePieceMove(currentSquare, square);
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -257,6 +258,9 @@ const ChessBoard = () => {
             console.log(
               `${draggingPiece} ${currentSquare}-${squarePieceDrop[0]} ${context.currentTurn}`
             );
+            context.setCurrentTurn(
+              context.currentTurn === 'white' ? 'black' : 'white'
+            );
             context.setNotation(
               context.notation +
                 formatNotation(
@@ -270,9 +274,6 @@ const ChessBoard = () => {
                 )
             );
             context.handlePieceMove(currentSquare, squarePieceDrop[0]);
-            context.setCurrentTurn(
-              context.currentTurn === 'white' ? 'black' : 'white'
-            );
             setPosition({
               x: squarePos[square].posX - piecePos.posX,
               y: squarePos[square].posY - piecePos.posY,
@@ -372,9 +373,9 @@ const ChessBoard = () => {
             );
             const isPossibleTake = isPossibleMove && piece !== 'empty';
             const isWhiteInCheck =
-              piece === 'K' && context.isWhiteKingInCheck(context.board2DArray);
+              piece === 'K' && isWhiteKingInCheck(context.board2DArray);
             const isBlackInCheck =
-              piece === 'k' && context.isBlackKingInCheck(context.board2DArray);
+              piece === 'k' && isBlackKingInCheck(context.board2DArray);
             const isPromotedWhitePawn = piece === 'P' && rank === 8;
             const isPromotedBlackPawn = piece === 'p' && rank === 1;
             const isDragStartSquare = dragStartSquare === square;

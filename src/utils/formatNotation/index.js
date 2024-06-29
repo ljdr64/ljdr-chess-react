@@ -483,7 +483,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}${square}\n`;
+        )}${square}`;
       }
       if (fromPiece === 'r') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
@@ -492,7 +492,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}${square}\n`;
+        )}${square}`;
       }
       if (fromPiece === 'b') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
@@ -501,7 +501,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}${square}\n`;
+        )}${square}`;
       }
       if (fromPiece === 'q') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
@@ -510,18 +510,18 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}${square}\n`;
+        )}${square}`;
       } else {
-        newNotation = ` ${fromPiece.toUpperCase()}${square}\n`;
+        newNotation = ` ${fromPiece.toUpperCase()}${square}`;
       }
     } else if (fromPiece === 'P' && fromPosition[0] === square[0]) {
       newNotation = ` ${fullmoveNumber}. ${square}`;
     } else if (fromPiece === 'P' && fromPosition[0] !== square[0]) {
       newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
     } else if (fromPiece === 'p' && fromPosition[0] === square[0]) {
-      newNotation = ` ${square}\n`;
+      newNotation = ` ${square}`;
     } else if (fromPiece === 'p' && fromPosition[0] !== square[0]) {
-      newNotation = ` ${fromPosition[0]}x${square}\n`;
+      newNotation = ` ${fromPosition[0]}x${square}`;
     } else if (fromPiece === 'N') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
         fromPiece,
@@ -566,7 +566,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}x${square}\n`;
+        )}x${square}`;
       }
       if (fromPiece === 'r') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
@@ -575,7 +575,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}x${square}\n`;
+        )}x${square}`;
       }
       if (fromPiece === 'b') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
@@ -584,7 +584,7 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}x${square}\n`;
+        )}x${square}`;
       }
       if (fromPiece === 'q') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
@@ -593,14 +593,14 @@ export const formatNotation = (
           fromPosition,
           board,
           fen
-        )}x${square}\n`;
+        )}x${square}`;
       } else {
-        newNotation = ` ${fromPiece.toUpperCase()}x${square}\n`;
+        newNotation = ` ${fromPiece.toUpperCase()}x${square}`;
       }
     } else if (fromPiece === 'P') {
       newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
     } else if (fromPiece === 'p') {
-      newNotation = ` ${fromPosition[0]}x${square}\n`;
+      newNotation = ` ${fromPosition[0]}x${square}`;
     } else if (fromPiece === 'N') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
         fromPiece,
@@ -649,10 +649,10 @@ export const formatNotation = (
 
   if (fromPiece === 'k' && fromPosition === 'e8') {
     if (square === 'g8') {
-      newNotation = ' 0-0\n';
+      newNotation = ' 0-0';
     }
     if (square === 'c8') {
-      newNotation = ' 0-0-0\n';
+      newNotation = ' 0-0-0';
     }
   }
 

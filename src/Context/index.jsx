@@ -16,8 +16,8 @@ export const ChessBoardProvider = ({ children }) => {
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
   const [onPromote, setOnPromote] = useState(null);
-  const [notation, setNotation] = useState('');  
-  
+  const [notation, setNotation] = useState('');
+
   const board2DArray = FENToBoard2DArray(fen);
 
   const handlePromote = (piece, square) => {
@@ -27,9 +27,9 @@ export const ChessBoardProvider = ({ children }) => {
       currentTurn === 'white' ? 'black' : 'white',
       currentTurn === 'white' ? fullmoveNumber : fullmoveNumber - 1,
       updateCastlingAvailability(fen, square),
-      '-',
+      '-'
     );
-    
+
     if (validateFEN(newFEN)) {
       setFEN(newFEN);
     } else {
@@ -43,72 +43,72 @@ export const ChessBoardProvider = ({ children }) => {
     let newCastlingAvailability = fenParts[2];
 
     if (fromPosition === 'a8') {
-        newCastlingAvailability = newCastlingAvailability.replace('q', '');
+      newCastlingAvailability = newCastlingAvailability.replace('q', '');
     } else if (fromPosition === 'h8') {
-        newCastlingAvailability = newCastlingAvailability.replace('k', '');
+      newCastlingAvailability = newCastlingAvailability.replace('k', '');
     } else if (fromPosition === 'a1') {
-        newCastlingAvailability = newCastlingAvailability.replace('Q', '');
+      newCastlingAvailability = newCastlingAvailability.replace('Q', '');
     } else if (fromPosition === 'h1') {
-        newCastlingAvailability = newCastlingAvailability.replace('K', '');
+      newCastlingAvailability = newCastlingAvailability.replace('K', '');
     } else if (fromPosition === 'e1') {
-        newCastlingAvailability = newCastlingAvailability.replace('K', '');
-        newCastlingAvailability = newCastlingAvailability.replace('Q', '');
+      newCastlingAvailability = newCastlingAvailability.replace('K', '');
+      newCastlingAvailability = newCastlingAvailability.replace('Q', '');
     } else if (fromPosition === 'e8') {
-        newCastlingAvailability = newCastlingAvailability.replace('k', '');
-        newCastlingAvailability = newCastlingAvailability.replace('q', '');
+      newCastlingAvailability = newCastlingAvailability.replace('k', '');
+      newCastlingAvailability = newCastlingAvailability.replace('q', '');
     }
 
     if (newCastlingAvailability === '') {
-      newCastlingAvailability = '-'
-    } 
-        
+      newCastlingAvailability = '-';
+    }
+
     return newCastlingAvailability;
-};
+  };
 
-const getEnPassantSquare = (piece, fromPosition, toPosition) => {
-  if (piece === 'P') {
-    if (fromPosition[1] === '2' && toPosition[1] === '4') {
-      const enPassantSquare = toPosition[0] + '3';
-      return enPassantSquare;
+  const getEnPassantSquare = (piece, fromPosition, toPosition) => {
+    if (piece === 'P') {
+      if (fromPosition[1] === '2' && toPosition[1] === '4') {
+        const enPassantSquare = toPosition[0] + '3';
+        return enPassantSquare;
+      }
     }
-  }
-  if (piece === 'p') {
-    if (fromPosition[1] === '7' && toPosition[1] === '5') {
-      const enPassantSquare = toPosition[0] + '6';
-      return enPassantSquare;
+    if (piece === 'p') {
+      if (fromPosition[1] === '7' && toPosition[1] === '5') {
+        const enPassantSquare = toPosition[0] + '6';
+        return enPassantSquare;
+      }
     }
-  }
-  return '-';
-};
+    return '-';
+  };
 
-const handlePieceMove = (fromPosition, toPosition) => {
-  const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
-    board2DArray,
-    fromPosition,
-    toPosition
-  );
-  const newFEN = board2DArrayToFEN(
-    newBoard2DArray,
-    currentTurn,
-    fullmoveNumber,
-    updateCastlingAvailability(fen, fromPosition),
-    getEnPassantSquare(piece, fromPosition, toPosition),
-  );
+  const handlePieceMove = (fromPosition, toPosition) => {
+    const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
+      board2DArray,
+      fromPosition,
+      toPosition
+    );
+    const newFEN = board2DArrayToFEN(
+      newBoard2DArray,
+      currentTurn,
+      fullmoveNumber,
+      updateCastlingAvailability(fen, fromPosition),
+      getEnPassantSquare(piece, fromPosition, toPosition)
+    );
 
-  console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
-  console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
-  
-  if (currentTurn === 'white') {
-    setFullmoveNumber(fullmoveNumber + 1);
-  }
+    console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
+    console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
 
-  if (validateFEN(newFEN)) {
-    setFEN(newFEN);
-  } else {
-    console.error('invalid FEN: ', newFEN);
-  }
-  console.log(newFEN);
-};
+    if (currentTurn === 'white') {
+      setFullmoveNumber(fullmoveNumber + 1);
+    }
+
+    if (validateFEN(newFEN)) {
+      setFEN(newFEN);
+    } else {
+      console.error('invalid FEN: ', newFEN);
+    }
+    console.log(newFEN);
+  };
 
   return (
     <ChessBoardContext.Provider
@@ -118,8 +118,6 @@ const handlePieceMove = (fromPosition, toPosition) => {
         handlePieceMove,
         setCurrentTurn,
         currentTurn,
-        isWhiteKingInCheck,
-        isBlackKingInCheck,
         handlePromote,
         setOnPromote,
         onPromote,

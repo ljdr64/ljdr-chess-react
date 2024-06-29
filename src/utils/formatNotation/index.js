@@ -83,6 +83,141 @@ function findPieceInRow(
 }
 
 /**
+ * Search for a piece in a diagonal in a given direction.
+ *
+ * @param {string} fromPiece - The piece that is moving (e.g., 'B' for bishop).
+ * @param {string} file - The starting column (in algebraic notation, e.g., 'e').
+ * @param {number} rank - The starting row (in numeric notation, e.g., 3).
+ * @param {Array} board - A 2D array representing the current state of the chessboard.
+ * @param {number} fileDirection - The direction in the column (1 for right, -1 for left).
+ * @param {number} rankDirection - The direction in the row (1 for up, -1 for down).
+ * @param {function} isMoveLegal - Function to check if a move is legal.
+ * @param {string} square - The target square to which the piece is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {string|null} - The column where the piece that can move is found, or null if none is found.
+ */
+function findPieceInDiagonal(
+  fromPiece,
+  file,
+  rank,
+  board,
+  fileDirection,
+  rankDirection,
+  isMoveLegal,
+  square,
+  fen
+) {
+  for (
+    let [r, f] = [rank + rankDirection, file.charCodeAt(0) + fileDirection];
+    f >= 'a'.charCodeAt(0) && f <= 'h'.charCodeAt(0) && r >= 1 && r <= 8;
+    [r, f] = [r + rankDirection, f + fileDirection]
+  ) {
+    const targetSquare = String.fromCharCode(f) + r;
+    if (
+      board[8 - r][f - 'a'.charCodeAt(0)] === fromPiece &&
+      isMoveLegal(fromPiece, square, targetSquare, board, fen)
+    ) {
+      return String.fromCharCode(f);
+    }
+    if (board[8 - r][f - 'a'.charCodeAt(0)] !== 'empty') {
+      break;
+    }
+  }
+  return null;
+}
+
+/**
+ * Check if there are conflicting rooks that can move to the same square.
+ *
+ * @param {string} fromPiece - The piece that is moving (should be 'R' for rook).
+ * @param {string} square - The target square to which the rook is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fromPosition - The initial position of the rook (in algebraic notation, e.g., 'a5').
+ * @param {Array} board - A 2D array representing the current state of the chessboard with pieces and 'empty' squares.
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {string} - The notation indicating if there are conflicting rooks.
+ */
+export const checkBishopConflicts = (
+  fromPiece,
+  square,
+  fromPosition,
+  board,
+  fen
+) => {
+  const file = square[0];
+  const rank = parseInt(square[1], 10);
+
+  let notation = '';
+
+  const directions = [
+    [1, 1], // rankUpFileUp
+    [1, -1], // rankDownFileUp
+    [-1, 1], // rankUpFileDown
+    [-1, -1], // rankDownFileDown
+  ];
+
+  for (const [rankDir, fileDir] of directions) {
+    if (
+      !(
+        Math.sign(fromPosition[0].charCodeAt(0) - file.charCodeAt(0)) ===
+          fileDir && Math.sign(parseInt(fromPosition[1], 10) - rank) === rankDir
+      )
+    ) {
+      const conflict = findPieceInDiagonal(
+        fromPiece,
+        file,
+        rank,
+        board,
+        fileDir,
+        rankDir,
+        isMoveLegal,
+        square,
+        fen
+      );
+      if (conflict) {
+        notation = fromPosition[0];
+        break;
+      }
+    }
+  }
+
+  if (
+    (parseInt(fromPosition[1], 10) < rank &&
+      2 * rank - parseInt(fromPosition[1], 10) <= 8) ||
+    (parseInt(fromPosition[1], 10) > rank &&
+      2 * rank - parseInt(fromPosition[1], 10) >= 1)
+  ) {
+    const possibleBishopRank = 8 - (2 * rank - parseInt(fromPosition[1], 10));
+    if (
+      board[possibleBishopRank][
+        fromPosition[0].charCodeAt(0) - 'a'.charCodeAt(0)
+      ] === fromPiece
+    ) {
+      if (
+        (fromPosition[0].charCodeAt(0) < file.charCodeAt(0) &&
+          2 * file.charCodeAt(0) - fromPosition[0].charCodeAt(0) <=
+            'h'.charCodeAt(0)) ||
+        (fromPosition[0].charCodeAt(0) > file.charCodeAt(0) &&
+          2 * file.charCodeAt(0) - fromPosition[0].charCodeAt(0) >=
+            'a'.charCodeAt(0))
+      ) {
+        const possibleBishopFile =
+          2 * file.charCodeAt(0) -
+          fromPosition[0].charCodeAt(0) -
+          'a'.charCodeAt(0);
+        if (board[8 - fromPosition[1]][possibleBishopFile] === fromPiece) {
+          notation = fromPosition;
+          return notation;
+        }
+      }
+      notation = fromPosition[1];
+      return notation;
+    }
+  }
+
+  return notation;
+};
+
+/**
  * Check if there are conflicting rooks that can move to the same square.
  *
  * @param {string} fromPiece - The piece that is moving (should be 'R' for rook).
@@ -310,6 +445,15 @@ export const formatNotation = (
           board,
           fen
         )}${square}\n`;
+      }
+      if (fromPiece === 'b') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}${square}\n`;
       } else {
         newNotation = ` ${fromPiece.toUpperCase()}${square}\n`;
       }
@@ -331,6 +475,14 @@ export const formatNotation = (
       )}${square}`;
     } else if (fromPiece === 'R') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}${square}`;
+    } else if (fromPiece === 'B') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
         fromPiece,
         square,
         fromPosition,
@@ -359,6 +511,15 @@ export const formatNotation = (
           board,
           fen
         )}x${square}\n`;
+      }
+      if (fromPiece === 'b') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}x${square}\n`;
       } else {
         newNotation = ` ${fromPiece.toUpperCase()}x${square}\n`;
       }
@@ -376,6 +537,14 @@ export const formatNotation = (
       )}x${square}`;
     } else if (fromPiece === 'R') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}x${square}`;
+    } else if (fromPiece === 'B') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
         fromPiece,
         square,
         fromPosition,

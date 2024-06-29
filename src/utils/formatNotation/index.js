@@ -127,6 +127,57 @@ function findPieceInDiagonal(
 }
 
 /**
+ * Check if there are conflicting queens that can move to the same square.
+ *
+ * @param {string} fromPiece - The piece that is moving (should be 'Q' for queen).
+ * @param {string} square - The target square to which the queen is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fromPosition - The initial position of the queen (in algebraic notation, e.g., 'a5').
+ * @param {Array} board - A 2D array representing the current state of the chessboard with pieces and 'empty' squares.
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {string} - The notation indicating if there are conflicting queens.
+ */
+export const checkQueenConflicts = (
+  fromPiece,
+  square,
+  fromPosition,
+  board,
+  fen
+) => {
+  const queensOnBoard = [];
+
+  let notation = '';
+
+  board.forEach((row, rowIndex) => {
+    row.forEach((targetPiece, colIndex) => {
+      const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+      const rank = 8 - rowIndex;
+      const targetSquare = `${file}${rank}`;
+      if (targetPiece === fromPiece) {
+        if (
+          isMoveLegal(fromPiece, square, targetSquare, board, fen) &&
+          targetSquare !== fromPosition
+        ) {
+          queensOnBoard.push(targetSquare);
+        }
+      }
+    });
+  });
+
+  if (queensOnBoard.length > 0) {
+    notation = fromPosition[0];
+  }
+  if (queensOnBoard.some((item) => item[0] === fromPosition[0])) {
+    if (queensOnBoard.some((item) => item[1] === fromPosition[1])) {
+      notation = fromPosition;
+      return notation;
+    }
+    notation = fromPosition[1];
+  }
+
+  return notation;
+};
+
+/**
  * Check if there are conflicting rooks that can move to the same square.
  *
  * @param {string} fromPiece - The piece that is moving (should be 'R' for rook).
@@ -386,18 +437,15 @@ export const checkKnightConflicts = (
     }
   }
 
+  if (knightsOnBoard.length > 0) {
+    notation = fromPosition[0];
+  }
   if (knightsOnBoard.some((item) => item[0] === fromPosition[0])) {
-    notation = notation + fromPosition[1];
-  }
-  if (
-    knightsOnBoard.some((item) => item[1] === fromPosition[1]) &&
-    notation !== ''
-  ) {
-    notation = fromPosition[0] + notation;
-    return [knightsOnBoard, notation];
-  }
-  if (knightsOnBoard.length > 0 && notation === '') {
-    notation = fromPosition[0] + notation;
+    if (knightsOnBoard.some((item) => item[1] === fromPosition[1])) {
+      notation = fromPosition;
+      return notation;
+    }
+    notation = fromPosition[1];
   }
 
   return notation;
@@ -454,6 +502,15 @@ export const formatNotation = (
           board,
           fen
         )}${square}\n`;
+      }
+      if (fromPiece === 'q') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}${square}\n`;
       } else {
         newNotation = ` ${fromPiece.toUpperCase()}${square}\n`;
       }
@@ -483,6 +540,14 @@ export const formatNotation = (
       )}${square}`;
     } else if (fromPiece === 'B') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}${square}`;
+    } else if (fromPiece === 'Q') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
         fromPiece,
         square,
         fromPosition,
@@ -520,6 +585,15 @@ export const formatNotation = (
           board,
           fen
         )}x${square}\n`;
+      }
+      if (fromPiece === 'q') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}x${square}\n`;
       } else {
         newNotation = ` ${fromPiece.toUpperCase()}x${square}\n`;
       }
@@ -545,6 +619,14 @@ export const formatNotation = (
       )}x${square}`;
     } else if (fromPiece === 'B') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}x${square}`;
+    } else if (fromPiece === 'Q') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
         fromPiece,
         square,
         fromPosition,

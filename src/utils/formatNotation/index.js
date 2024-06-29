@@ -1,6 +1,202 @@
 import { isMoveLegal } from '../../ChessMoves';
 
 /**
+ * Search for a piece in a specific column in a given direction.
+ *
+ * @param {string} fromPiece - The piece that is moving (e.g., 'R' for rook).
+ * @param {string} file - The target column (in algebraic notation, e.g., 'e').
+ * @param {number} rank - The target row (in numeric notation, e.g., 5).
+ * @param {Array} board - A 2D array representing the current state of the chessboard.
+ * @param {number} direction - The direction of the search (1 for up, -1 for down).
+ * @param {function} isMoveLegal - Function to check if a move is legal.
+ * @param {string} square - The target square to which the piece is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {number|null} - The row (rank) where the piece that can move is found, or null if none is found.
+ */
+function findPieceInColumn(
+  fromPiece,
+  file,
+  rank,
+  board,
+  direction,
+  isMoveLegal,
+  square,
+  fen
+) {
+  const fileIndex = file.charCodeAt(0) - 'a'.charCodeAt(0);
+  for (let r = rank + direction; r >= 1 && r <= 8; r += direction) {
+    const targetSquare = file + r;
+    if (
+      board[8 - r][fileIndex] === fromPiece &&
+      isMoveLegal(fromPiece, square, targetSquare, board, fen)
+    ) {
+      return r;
+    }
+    if (board[8 - r][fileIndex] !== 'empty') {
+      break;
+    }
+  }
+  return null;
+}
+
+/**
+ * Search for a piece in a specific row in a given direction.
+ *
+ * @param {string} fromPiece - The piece that is moving (e.g., 'R' for rook).
+ * @param {string} file - The starting column (in algebraic notation, e.g., 'e').
+ * @param {number} rank - The target row (in numeric notation, e.g., 5).
+ * @param {Array} board - A 2D array representing the current state of the chessboard.
+ * @param {number} direction - The direction of the search (1 for right, -1 for left).
+ * @param {function} isMoveLegal - Function to check if a move is legal.
+ * @param {string} square - The target square to which the piece is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {string|null} - The column (file) where the piece that can move is found, or null if none is found.
+ */
+function findPieceInRow(
+  fromPiece,
+  file,
+  rank,
+  board,
+  direction,
+  isMoveLegal,
+  square,
+  fen
+) {
+  const rankIndex = 8 - rank;
+  for (
+    let f = file.charCodeAt(0) + direction;
+    f >= 'a'.charCodeAt(0) && f <= 'h'.charCodeAt(0);
+    f += direction
+  ) {
+    const targetSquare = String.fromCharCode(f) + rank;
+    if (
+      board[rankIndex][f - 'a'.charCodeAt(0)] === fromPiece &&
+      isMoveLegal(fromPiece, square, targetSquare, board, fen)
+    ) {
+      return String.fromCharCode(f);
+    }
+    if (board[rankIndex][f - 'a'.charCodeAt(0)] !== 'empty') {
+      break;
+    }
+  }
+  return null;
+}
+
+/**
+ * Check if there are conflicting rooks that can move to the same square.
+ *
+ * @param {string} fromPiece - The piece that is moving (should be 'R' for rook).
+ * @param {string} square - The target square to which the rook is moving (in algebraic notation, e.g., 'e5').
+ * @param {string} fromPosition - The initial position of the rook (in algebraic notation, e.g., 'a5').
+ * @param {Array} board - A 2D array representing the current state of the chessboard with pieces and 'empty' squares.
+ * @param {string} fen - The current FEN notation representing the state of the game.
+ * @returns {string} - The notation indicating if there are conflicting rooks.
+ */
+export const checkRookConflicts = (
+  fromPiece,
+  square,
+  fromPosition,
+  board,
+  fen
+) => {
+  const file = square[0];
+  const rank = parseInt(square[1], 10);
+
+  let notation = '';
+
+  if (
+    fromPosition[0].charCodeAt(0) !== file.charCodeAt(0) ||
+    fromPosition[1] < rank.toString()
+  ) {
+    const rankUp = findPieceInColumn(
+      fromPiece,
+      file,
+      rank,
+      board,
+      1,
+      isMoveLegal,
+      square,
+      fen
+    );
+    if (rankUp) {
+      if (fromPosition[0].charCodeAt(0) !== file.charCodeAt(0)) {
+        notation = fromPosition[0];
+        return notation;
+      }
+      if (fromPosition[1] < rank.toString()) {
+        notation = fromPosition[1];
+        return notation;
+      }
+    }
+  }
+  if (
+    fromPosition[0].charCodeAt(0) !== file.charCodeAt(0) ||
+    fromPosition[1] > rank.toString()
+  ) {
+    const rankDown = findPieceInColumn(
+      fromPiece,
+      file,
+      rank,
+      board,
+      -1,
+      isMoveLegal,
+      square,
+      fen
+    );
+    if (rankDown) {
+      if (fromPosition[0].charCodeAt(0) !== file.charCodeAt(0)) {
+        notation = fromPosition[0];
+        return notation;
+      }
+      if (fromPosition[1] > rank.toString()) {
+        notation = fromPosition[1];
+        return notation;
+      }
+    }
+  }
+  if (
+    fromPosition[0].charCodeAt(0) < file.charCodeAt(0) ||
+    fromPosition[1] !== rank.toString()
+  ) {
+    const fileRight = findPieceInRow(
+      fromPiece,
+      file,
+      rank,
+      board,
+      1,
+      isMoveLegal,
+      square,
+      fen
+    );
+    if (fileRight) {
+      notation = fromPosition[0];
+      return notation;
+    }
+  }
+  if (
+    fromPosition[0].charCodeAt(0) > file.charCodeAt(0) ||
+    fromPosition[1] !== rank.toString()
+  ) {
+    const fileLeft = findPieceInRow(
+      fromPiece,
+      file,
+      rank,
+      board,
+      -1,
+      isMoveLegal,
+      square,
+      fen
+    );
+    if (fileLeft) {
+      notation = fromPosition[0];
+      return notation;
+    }
+  }
+
+  return notation;
+};
+
+/**
  * Check if there are conflicting knights that can move to the same square.
  *
  * @param {string} fromPiece - The piece that is moving (should be 'N' for knight).
@@ -95,22 +291,19 @@ export const formatNotation = (
 ) => {
   let newNotation = '';
 
-  if (fromPiece === 'n') {
-    console.log(
-      ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}${square}`
-    );
-  }
-
   if (piece === 'empty') {
     if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
       if (fromPiece === 'n') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}${square}\n`;
+      }
+      if (fromPiece === 'r') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
           fromPiece,
           square,
           fromPosition,
@@ -136,6 +329,14 @@ export const formatNotation = (
         board,
         fen
       )}${square}`;
+    } else if (fromPiece === 'R') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}${square}`;
     } else {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${square}`;
     }
@@ -143,6 +344,15 @@ export const formatNotation = (
     if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
       if (fromPiece === 'n') {
         newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+          fromPiece,
+          square,
+          fromPosition,
+          board,
+          fen
+        )}x${square}\n`;
+      }
+      if (fromPiece === 'r') {
+        newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
           fromPiece,
           square,
           fromPosition,
@@ -158,6 +368,14 @@ export const formatNotation = (
       newNotation = ` ${fromPosition[0]}x${square}\n`;
     } else if (fromPiece === 'N') {
       newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
+        fromPiece,
+        square,
+        fromPosition,
+        board,
+        fen
+      )}x${square}`;
+    } else if (fromPiece === 'R') {
+      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
         fromPiece,
         square,
         fromPosition,

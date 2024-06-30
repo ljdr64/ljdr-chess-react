@@ -82,7 +82,8 @@ const ChessBoard = () => {
         context.currentTurn === 'white' ? 'black' : 'white'
       );
       context.setNotation(
-        context.notation +
+        (prev) =>
+          prev +
           formatNotation(
             draggingPiece,
             currentSquare,
@@ -112,7 +113,8 @@ const ChessBoard = () => {
         context.currentTurn === 'white' ? 'black' : 'white'
       );
       context.setNotation(
-        context.notation +
+        (prev) =>
+          prev +
           formatNotation(
             draggingPiece,
             currentSquare,
@@ -262,7 +264,8 @@ const ChessBoard = () => {
               context.currentTurn === 'white' ? 'black' : 'white'
             );
             context.setNotation(
-              context.notation +
+              (prev) =>
+                prev +
                 formatNotation(
                   draggingPiece,
                   currentSquare,

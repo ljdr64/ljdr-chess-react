@@ -473,38 +473,81 @@ export const formatNotation = (
   fen
 ) => {
   let newNotation = '';
-
-  if (piece === 'empty') {
-    if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
-      if (fromPiece === 'n') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+  if (square) {
+    if (piece === 'empty') {
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        if (fromPiece === 'n') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}${square}`;
+        }
+        if (fromPiece === 'r') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}${square}`;
+        }
+        if (fromPiece === 'b') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}${square}`;
+        }
+        if (fromPiece === 'q') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}${square}`;
+        } else {
+          newNotation = ` ${fromPiece.toUpperCase()}${square}`;
+        }
+      } else if (fromPiece === 'P' && fromPosition[0] === square[0]) {
+        newNotation = ` ${fullmoveNumber}. ${square}`;
+      } else if (fromPiece === 'P' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p' && fromPosition[0] === square[0]) {
+        newNotation = ` ${square}`;
+      } else if (fromPiece === 'p' && fromPosition[0] !== square[0]) {
+        newNotation = ` ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'N') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}${square}`;
-      }
-      if (fromPiece === 'r') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
+      } else if (fromPiece === 'R') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}${square}`;
-      }
-      if (fromPiece === 'b') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+      } else if (fromPiece === 'B') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}${square}`;
-      }
-      if (fromPiece === 'q') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+      } else if (fromPiece === 'Q') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
           fromPiece,
           square,
           fromPosition,
@@ -512,82 +555,78 @@ export const formatNotation = (
           fen
         )}${square}`;
       } else {
-        newNotation = ` ${fromPiece.toUpperCase()}${square}`;
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${square}`;
       }
-    } else if (fromPiece === 'P' && fromPosition[0] === square[0]) {
-      newNotation = ` ${fullmoveNumber}. ${square}`;
-    } else if (fromPiece === 'P' && fromPosition[0] !== square[0]) {
-      newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
-    } else if (fromPiece === 'p' && fromPosition[0] === square[0]) {
-      newNotation = ` ${square}`;
-    } else if (fromPiece === 'p' && fromPosition[0] !== square[0]) {
-      newNotation = ` ${fromPosition[0]}x${square}`;
-    } else if (fromPiece === 'N') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}${square}`;
-    } else if (fromPiece === 'R') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}${square}`;
-    } else if (fromPiece === 'B') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}${square}`;
-    } else if (fromPiece === 'Q') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}${square}`;
     } else {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${square}`;
-    }
-  } else {
-    if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
-      if (fromPiece === 'n') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+      if (fromPiece === fromPiece.toLowerCase() && !(fromPiece === 'p')) {
+        if (fromPiece === 'n') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkKnightConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}x${square}`;
+        }
+        if (fromPiece === 'r') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}x${square}`;
+        }
+        if (fromPiece === 'b') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}x${square}`;
+        }
+        if (fromPiece === 'q') {
+          newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+            fromPiece,
+            square,
+            fromPosition,
+            board,
+            fen
+          )}x${square}`;
+        } else {
+          newNotation = ` ${fromPiece.toUpperCase()}x${square}`;
+        }
+      } else if (fromPiece === 'P') {
+        newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'p') {
+        newNotation = ` ${fromPosition[0]}x${square}`;
+      } else if (fromPiece === 'N') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}x${square}`;
-      }
-      if (fromPiece === 'r') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
+      } else if (fromPiece === 'R') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}x${square}`;
-      }
-      if (fromPiece === 'b') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
+      } else if (fromPiece === 'B') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
           fromPiece,
           square,
           fromPosition,
           board,
           fen
         )}x${square}`;
-      }
-      if (fromPiece === 'q') {
-        newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
+      } else if (fromPiece === 'Q') {
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
           fromPiece,
           square,
           fromPosition,
@@ -595,64 +634,26 @@ export const formatNotation = (
           fen
         )}x${square}`;
       } else {
-        newNotation = ` ${fromPiece.toUpperCase()}x${square}`;
+        newNotation = ` ${fullmoveNumber}. ${fromPiece}x${square}`;
       }
-    } else if (fromPiece === 'P') {
-      newNotation = ` ${fullmoveNumber}. ${fromPosition[0]}x${square}`;
-    } else if (fromPiece === 'p') {
-      newNotation = ` ${fromPosition[0]}x${square}`;
-    } else if (fromPiece === 'N') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkKnightConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}x${square}`;
-    } else if (fromPiece === 'R') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkRookConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}x${square}`;
-    } else if (fromPiece === 'B') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkBishopConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}x${square}`;
-    } else if (fromPiece === 'Q') {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}${checkQueenConflicts(
-        fromPiece,
-        square,
-        fromPosition,
-        board,
-        fen
-      )}x${square}`;
-    } else {
-      newNotation = ` ${fullmoveNumber}. ${fromPiece}x${square}`;
     }
-  }
 
-  if (fromPiece === 'K' && fromPosition === 'e1') {
-    if (square === 'g1') {
-      newNotation = ` ${fullmoveNumber}. 0-0`;
+    if (fromPiece === 'K' && fromPosition === 'e1') {
+      if (square === 'g1') {
+        newNotation = ` ${fullmoveNumber}. 0-0`;
+      }
+      if (square === 'c1') {
+        newNotation = ` ${fullmoveNumber}. 0-0-0`;
+      }
     }
-    if (square === 'c1') {
-      newNotation = ` ${fullmoveNumber}. 0-0-0`;
-    }
-  }
 
-  if (fromPiece === 'k' && fromPosition === 'e8') {
-    if (square === 'g8') {
-      newNotation = ' 0-0';
-    }
-    if (square === 'c8') {
-      newNotation = ' 0-0-0';
+    if (fromPiece === 'k' && fromPosition === 'e8') {
+      if (square === 'g8') {
+        newNotation = ' 0-0';
+      }
+      if (square === 'c8') {
+        newNotation = ' 0-0-0';
+      }
     }
   }
 

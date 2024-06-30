@@ -1,22 +1,92 @@
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
 import { isBlackKingInCheck, isWhiteKingInCheck } from '../../KingInCheck';
+import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
 
 const ChessNotation = () => {
   const context = useContext(ChessBoardContext);
   const notationRef = useRef(null);
+  const [possiblesMoves, setPossiblesMoves] = useState({
+    white: [],
+    black: [],
+  });
 
-  if (
-    (isBlackKingInCheck(context.board2DArray) ||
-      isWhiteKingInCheck(context.board2DArray)) &&
-    !context.notation.endsWith('+')
-  ) {
-    context.setNotation(context.notation + '+');
-  }
+  useEffect(() => {
+    const updatedPossiblesMoves = { white: [], black: [] };
 
-  if (notationRef.current) {
-    notationRef.current.scrollTop = notationRef.current.scrollHeight;
-  }
+    context.board2DArray.forEach((row, rowIndex) => {
+      row.forEach((targetPiece, colIndex) => {
+        if (targetPiece !== 'empty') {
+          const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
+          const rank = 8 - rowIndex;
+          const square = `${file}${rank}`;
+          if (targetPiece === targetPiece.toUpperCase()) {
+            updatedPossiblesMoves.white.push(
+              ...calculatePossibleMoves(
+                targetPiece,
+                square,
+                context.board2DArray,
+                context.fen
+              )
+            );
+          }
+          if (targetPiece === targetPiece.toLowerCase()) {
+            updatedPossiblesMoves.black.push(
+              ...calculatePossibleMoves(
+                targetPiece,
+                square,
+                context.board2DArray,
+                context.fen
+              )
+            );
+          }
+        }
+      });
+    });
+
+    setPossiblesMoves(updatedPossiblesMoves);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.board2DArray, context.fen]);
+
+  useEffect(() => {
+    const updateNotation = () => {
+      const isBlackKingCheck = isBlackKingInCheck(context.board2DArray);
+      const isWhiteKingCheck = isWhiteKingInCheck(context.board2DArray);
+
+      const isBlackCheckmate =
+        isBlackKingCheck && possiblesMoves.black.length === 0;
+      const isWhiteCheckmate =
+        isWhiteKingCheck && possiblesMoves.white.length === 0;
+
+      let newNotation = context.notation;
+
+      if (
+        (isBlackKingCheck || isWhiteKingCheck) &&
+        !context.notation.endsWith('+') &&
+        !context.notation.endsWith('#')
+      ) {
+        newNotation += '+';
+      }
+      if (
+        (isBlackCheckmate || isWhiteCheckmate) &&
+        context.notation.endsWith('+') &&
+        !context.notation.endsWith('#')
+      ) {
+        newNotation = newNotation.slice(0, -1) + '#';
+      }
+
+      context.setNotation(newNotation);
+    };
+
+    if (notationRef.current) {
+      notationRef.current.scrollTop = notationRef.current.scrollHeight;
+    }
+
+    updateNotation();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context.board2DArray, context.notation, possiblesMoves]);
 
   return (
     <div

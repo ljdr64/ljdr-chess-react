@@ -82,7 +82,8 @@ const ChessBoard = () => {
         context.currentTurn === 'white' ? 'black' : 'white'
       );
       context.setNotation(
-        context.notation +
+        (prev) =>
+          prev +
           formatNotation(
             draggingPiece,
             currentSquare,
@@ -112,7 +113,8 @@ const ChessBoard = () => {
         context.currentTurn === 'white' ? 'black' : 'white'
       );
       context.setNotation(
-        context.notation +
+        (prev) =>
+          prev +
           formatNotation(
             draggingPiece,
             currentSquare,
@@ -239,9 +241,9 @@ const ChessBoard = () => {
 
         if (
           position.y >= squarePos[square].posY - piecePos.posY - 24 &&
-          position.y <= squarePos[square].posY - piecePos.posY + 24 &&
+          position.y <= squarePos[square].posY - piecePos.posY + 23 &&
           position.x >= squarePos[square].posX - piecePos.posX - 24 &&
-          position.x <= squarePos[square].posX - piecePos.posX + 24
+          position.x <= squarePos[square].posX - piecePos.posX + 23
         ) {
           squarePieceDrop = [square, piece];
           positionFound = true;
@@ -262,7 +264,8 @@ const ChessBoard = () => {
               context.currentTurn === 'white' ? 'black' : 'white'
             );
             context.setNotation(
-              context.notation +
+              (prev) =>
+                prev +
                 formatNotation(
                   draggingPiece,
                   currentSquare,

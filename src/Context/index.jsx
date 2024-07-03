@@ -15,6 +15,7 @@ export const ChessBoardProvider = ({ children }) => {
   const [fen, setFEN] = useState(initialFEN);
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
+  const [halfmoveNumber, setHalfmoveNumber] = useState(0);
   const [onPromote, setOnPromote] = useState(null);
   const [notation, setNotation] = useState('');
 
@@ -26,6 +27,7 @@ export const ChessBoardProvider = ({ children }) => {
       promotionPieceInBoard2DArray(board2DArray, square, piece),
       currentTurn === 'white' ? 'black' : 'white',
       currentTurn === 'white' ? fullmoveNumber : fullmoveNumber - 1,
+      0,
       updateCastlingAvailability(fen, square),
       '-'
     );
@@ -87,20 +89,44 @@ export const ChessBoardProvider = ({ children }) => {
       fromPosition,
       toPosition
     );
+
+    let updatedFullmoveNumber = fullmoveNumber;
+
+    if (currentTurn === 'black') {
+      updatedFullmoveNumber++;
+    }
+
+    setFullmoveNumber(updatedFullmoveNumber);
+
+    const toFile = toPosition[0];
+    const toRank = parseInt(toPosition[1], 10);
+
+    const isPawnMove = piece.toLowerCase() === 'p';
+    const isCapture =
+      board2DArray[8 - toRank][toFile.charCodeAt(0) - 'a'.charCodeAt(0)] !==
+      'empty';
+
+    let updatedHalfmoveNumber = halfmoveNumber;
+
+    if (isPawnMove || isCapture) {
+      updatedHalfmoveNumber = 0;
+    } else {
+      updatedHalfmoveNumber++;
+    }
+
+    setHalfmoveNumber(updatedHalfmoveNumber);
+
     const newFEN = board2DArrayToFEN(
       newBoard2DArray,
       currentTurn,
-      fullmoveNumber,
+      updatedFullmoveNumber,
+      updatedHalfmoveNumber,
       updateCastlingAvailability(fen, fromPosition),
       getEnPassantSquare(piece, fromPosition, toPosition)
     );
 
     console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
     console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
-
-    if (currentTurn === 'white') {
-      setFullmoveNumber(fullmoveNumber + 1);
-    }
 
     if (validateFEN(newFEN)) {
       setFEN(newFEN);
@@ -122,6 +148,8 @@ export const ChessBoardProvider = ({ children }) => {
         setOnPromote,
         onPromote,
         fullmoveNumber,
+        setHalfmoveNumber,
+        halfmoveNumber,
         setNotation,
         notation,
       }}

@@ -41,6 +41,7 @@ export const board2DArrayToFEN = (
   board,
   currentTurn,
   fullmoveNumber,
+  halfmoveNumber,
   castlingAvailability,
   enPassantSquare
 ) => {
@@ -66,7 +67,7 @@ export const board2DArrayToFEN = (
 
   return `${fenRows.join(
     '/'
-  )} ${fenTurn} ${castlingAvailability} ${enPassantSquare} 0 ${fullmoveNumber}`;
+  )} ${fenTurn} ${castlingAvailability} ${enPassantSquare} ${halfmoveNumber} ${fullmoveNumber}`;
 };
 
 /**

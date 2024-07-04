@@ -1,7 +1,36 @@
+:root {
+  --dim-square: 60px;
+  --dim-board: calc(var(--dim-square) * 8);
+  --dim-board-padding: calc(var(--dim-board) + 64px);
+}
+
 .dark-square {
   background-color: #b58863;
 }
 
 .light-square {
   background-color: #f0d9b5;
+}
+
+.dim-square,
+.dim-piece {
+  width: var(--dim-square);
+  height: var(--dim-square);
+}
+
+.dim-board {
+  width: var(--dim-board);
+  height: var(--dim-board);
+}
+
+.promote-white {
+  margin-top: calc(var(--dim-square) * 3);
+}
+
+.promote-black {
+  margin-bottom: calc(var(--dim-square) * 3);
+}
+
+.square-promote {
+  width: var(--dim-square);
 }

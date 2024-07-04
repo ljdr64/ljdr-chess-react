@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
 import { isBlackKingInCheck, isWhiteKingInCheck } from '../../KingInCheck';
 import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
+import '../ChessBoard/styles.css';
 
 const ChessNotation = () => {
   const context = useContext(ChessBoardContext);
@@ -91,7 +92,7 @@ const ChessNotation = () => {
   return (
     <div
       ref={notationRef}
-      className="w-full h-[83px] lg:w-60 lg:h-96 flex flex-col bg-white overflow-y-scroll"
+      className="w-full h-[83px] lg:w-60 lg:h-[var(--dim-board)] flex flex-col bg-white overflow-y-scroll"
     >
       {context.notation.split('.').map((line, index) => {
         const moves = line.split(' ');

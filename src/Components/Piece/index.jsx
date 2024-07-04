@@ -1,3 +1,5 @@
+import '../ChessBoard/styles.css';
+
 const Piece = ({ piece, onClick }) => {
   // Función para determinar el ID del símbolo basado en la pieza recibida
   const getSymbolId = (piece) => {
@@ -40,7 +42,7 @@ const Piece = ({ piece, onClick }) => {
       className="w-full h-full flex items-center justify-center select-none"
       onClick={onClick}
     >
-      <img src={svgUrl} alt={`Chess piece ${piece}`} className="w-12 h-12" />
+      <img src={svgUrl} alt={`Chess piece ${piece}`} className="dim-piece" />
     </div>
   );
 };

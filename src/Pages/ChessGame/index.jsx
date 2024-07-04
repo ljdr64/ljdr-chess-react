@@ -3,6 +3,7 @@ import { ChessBoardContext } from '../../Context';
 import Layout from '../../Components/Layout';
 import ChessBoard from '../../Components/ChessBoard';
 import ChessNotation from '../../Components/ChessNotation';
+import '../../Components/ChessBoard/styles.css';
 
 function ChessGame() {
   const context = useContext(ChessBoardContext);
@@ -17,9 +18,9 @@ function ChessGame() {
 
   return (
     <Layout>
-      <h1 className="font-bold text-[40px] mb-4 lg:mb-10">ChessGame</h1>
+      <h1 className="font-bold text-[40px] mb-2">ChessGame</h1>
       <div className="justify-center mb-10">
-        <div className="flex lg:flex-row flex-col w-[448px] lg:w-full">
+        <div className="flex lg:flex-row flex-col w-[var(--dim-board-padding)] lg:w-full">
           <div className="bg-gray-200 p-8 rounded-lg shadow-lg">
             <ChessBoard />
           </div>
@@ -27,7 +28,7 @@ function ChessGame() {
             <ChessNotation />
           </div>
         </div>
-        <div className="lg:block bg-gray-200 w-[448px] lg:w-full max-w-[752px] p-8 rounded-lg shadow-lg">
+        <div className="lg:block bg-gray-200 lg:w-full max-w-[var(--dim-board-padding)] p-8 rounded-lg shadow-lg">
           <pre className="text-wrap border border-gray-600 shadow-lg text-sm bg-white p-2 overflow-auto">
             {context.fen}
           </pre>

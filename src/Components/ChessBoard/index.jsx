@@ -19,6 +19,12 @@ const ChessBoard = () => {
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [highlightedSquare, setHighlightedSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
+  const squareSize = useMemo(() => {
+    const size = getComputedStyle(document.documentElement).getPropertyValue(
+      '--dim-square'
+    );
+    return parseInt(size, 10);
+  }, []);
 
   let squarePieceDrop = [null, 'empty'];
 
@@ -153,8 +159,10 @@ const ChessBoard = () => {
 
     const pieceMove = document.getElementById(square);
     if (pieceMove) {
-      const offsetX = e.clientX - pieceMove.getBoundingClientRect().left - 24;
-      const offsetY = e.clientY - pieceMove.getBoundingClientRect().top - 24;
+      const offsetX =
+        e.clientX - pieceMove.getBoundingClientRect().left - squareSize / 2;
+      const offsetY =
+        e.clientY - pieceMove.getBoundingClientRect().top - squareSize / 2;
       setPosition({ x: offsetX, y: offsetY });
       setIsDragging(true);
     }
@@ -166,8 +174,8 @@ const ChessBoard = () => {
   function handleMouseMove(e) {
     const pieceArea = pieceRefs[currentSquare].current;
     const piecePos = {
-      posX: pieceArea.offsetLeft + 24,
-      posY: pieceArea.offsetTop + 24,
+      posX: pieceArea.offsetLeft + squareSize / 2,
+      posY: pieceArea.offsetTop + squareSize / 2,
     };
 
     const moves = calculatePossibleMoves(
@@ -188,8 +196,8 @@ const ChessBoard = () => {
         posY: squareArea[item].offsetTop,
       };
       if (
-        e.clientX - squarePos[item].posX + window.scrollX <= 47 &&
-        e.clientY - squarePos[item].posY + window.scrollY <= 47 &&
+        e.clientX - squarePos[item].posX + window.scrollX <= squareSize - 1 &&
+        e.clientY - squarePos[item].posY + window.scrollY <= squareSize - 1 &&
         e.clientX - squarePos[item].posX + window.scrollX >= 0 &&
         e.clientY - squarePos[item].posY + window.scrollY >= 0
       ) {
@@ -240,10 +248,14 @@ const ChessBoard = () => {
         const square = `${file}${rank}`;
 
         if (
-          position.y >= squarePos[square].posY - piecePos.posY - 24 &&
-          position.y <= squarePos[square].posY - piecePos.posY + 23 &&
-          position.x >= squarePos[square].posX - piecePos.posX - 24 &&
-          position.x <= squarePos[square].posX - piecePos.posX + 23
+          position.y >=
+            squarePos[square].posY - piecePos.posY - squareSize / 2 &&
+          position.y <=
+            squarePos[square].posY - piecePos.posY + squareSize / 2 - 1 &&
+          position.x >=
+            squarePos[square].posX - piecePos.posX - squareSize / 2 &&
+          position.x <=
+            squarePos[square].posX - piecePos.posX + squareSize / 2 - 1
         ) {
           squarePieceDrop = [square, piece];
           positionFound = true;
@@ -363,7 +375,7 @@ const ChessBoard = () => {
 
   return (
     <div className="board-container mx-auto select-none">
-      <div className="flex flex-wrap w-96 cursor-pointer select-none">
+      <div className="flex flex-wrap dim-board cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
             const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);
@@ -399,7 +411,7 @@ const ChessBoard = () => {
               <div
                 key={square}
                 ref={squareRefs[square]}
-                className={`w-12 h-12 flex items-center justify-center cursor-pointer ${squareClass}`}
+                className={`dim-square flex items-center justify-center cursor-pointer ${squareClass}`}
                 onMouseDown={(e) => handleMouseDown(e, square, piece)}
                 onTouchStart={(e) => handleStart(e, square, piece)}
                 onClick={() => handleMouseClick(square)}
@@ -407,18 +419,18 @@ const ChessBoard = () => {
                 {currentSquare === square ? (
                   <>
                     {isPromotedWhitePawn && piece === 'P' && (
-                      <div className="shadow-lg h-auto mt-[144px] z-20">
+                      <div className="shadow-lg h-auto promote-white z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
                     {isPromotedBlackPawn && piece === 'p' && (
-                      <div className="shadow-lg h-auto mb-[144px] z-20">
+                      <div className="shadow-lg h-auto promote-black z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
                     <div
                       ref={pieceRefs[square]}
-                      className="card w-12 h-12 cursor-pointer"
+                      className="card dim-square cursor-pointer"
                       style={{
                         transform: `translate(${position.x}px, ${position.y}px)`,
                       }}
@@ -433,18 +445,18 @@ const ChessBoard = () => {
                 ) : (
                   <>
                     {isPromotedWhitePawn && piece === 'P' && (
-                      <div className="shadow-lg h-auto mt-[144px] z-20">
+                      <div className="shadow-lg h-auto promote-white z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
                     {isPromotedBlackPawn && piece === 'p' && (
-                      <div className="shadow-lg h-auto mb-[144px] z-20">
+                      <div className="shadow-lg h-auto promote-black z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
                     <div
                       ref={pieceRefs[square]}
-                      className="card w-12 h-12 cursor-pointer"
+                      className="card dim-square cursor-pointer"
                     >
                       <div id={square} className="h-full pointer-events-none">
                         {piece !== 'empty' && <Piece piece={piece} />}

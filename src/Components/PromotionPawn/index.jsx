@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { ChessBoardContext } from '../../Context';
 import Piece from '../Piece';
+import '../ChessBoard/styles.css';
 
 const PromotionPawn = ({ piece, square }) => {
   const context = useContext(ChessBoardContext);
@@ -13,7 +14,7 @@ const PromotionPawn = ({ piece, square }) => {
   return (
     <>
       {piece === 'P' ? (
-        <div className="flex flex-col w-12 z-20 bg-white">
+        <div className="flex flex-col square-promote z-20 bg-white">
           <div className="bg-circle-promotion-pawn hover:bg-orange-400">
             <Piece piece={'Q'} onClick={() => handlePieceClick('Q')} />
           </div>
@@ -28,7 +29,7 @@ const PromotionPawn = ({ piece, square }) => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col w-12 z-20 bg-white">
+        <div className="flex flex-col square-promote z-20 bg-white">
           <div className="bg-circle-promotion-pawn hover:bg-orange-400">
             <Piece piece={'b'} onClick={() => handlePieceClick('b')} />
           </div>

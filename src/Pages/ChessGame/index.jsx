@@ -21,14 +21,14 @@ function ChessGame() {
       <h1 className="font-bold text-[40px] mb-2">ChessGame</h1>
       <div className="justify-center mb-10">
         <div className="flex lg:flex-row flex-col w-[var(--dim-board-padding)] lg:w-full">
-          <div className="bg-gray-200 p-8 rounded-lg shadow-lg">
+          <div className="bg-gray-200 chessgame-padding rounded-lg shadow-lg">
             <ChessBoard />
           </div>
-          <div className="hidden lg:block bg-gray-200 p-8 rounded-lg shadow-lg">
+          <div className="hidden lg:block bg-gray-200 chessgame-padding rounded-lg shadow-lg">
             <ChessNotation />
           </div>
         </div>
-        <div className="lg:block bg-gray-200 lg:w-full max-w-[var(--dim-board-padding)] p-8 rounded-lg shadow-lg">
+        <div className="lg:block bg-gray-200 lg:w-full max-w-[var(--dim-board-padding)] chessgame-padding rounded-lg shadow-lg">
           <pre className="text-wrap border border-gray-600 shadow-lg text-sm bg-white p-2 overflow-auto">
             {context.fen}
           </pre>

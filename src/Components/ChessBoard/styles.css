@@ -1,7 +1,26 @@
 :root {
   --dim-square: 60px;
   --dim-board: calc(var(--dim-square) * 8);
-  --dim-board-padding: calc(var(--dim-board) + 64px);
+  --dim-padding: calc(var(--dim-square) / 2 + 2px);
+  --dim-board-padding: calc(var(--dim-board) + var(--dim-padding) * 2);
+}
+
+@media screen and (max-width: 600px) {
+  :root {
+    --dim-square: 54px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  :root {
+    --dim-square: 44px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  :root {
+    --dim-square: 38px;
+  }
 }
 
 .dark-square {
@@ -33,4 +52,8 @@
 
 .square-promote {
   width: var(--dim-square);
+}
+
+.chessgame-padding {
+  padding: var(--dim-padding);
 }

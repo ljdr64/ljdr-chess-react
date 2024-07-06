@@ -7,10 +7,7 @@ import './styles.css';
 const Navbar = () => {
   const activeStyle = 'underline underline-offset-4';
 
-  const Links = [
-    { name: 'Home', link: '/' },
-    { name: 'ChessGame', link: '/chess-game' },
-  ];
+  const Links = [{ name: 'ChessGame', link: '/' }];
   let User = [
     { name: 'Login', link: '/login' },
     { name: 'Profile', link: '/profile' },

@@ -1,6 +1,5 @@
 import { useRoutes, BrowserRouter } from 'react-router-dom';
 import { ChessBoardProvider } from '../../Context';
-import Home from '../Home';
 import ChessGame from '../ChessGame';
 import Login from '../Login';
 import Register from '../Register';
@@ -11,8 +10,7 @@ import './App.css';
 
 const AppRoutes = () => {
   let routes = useRoutes([
-    { path: '/', element: <Home /> },
-    { path: '/chess-game', element: <ChessGame /> },
+    { path: '/', element: <ChessGame /> },
     { path: '/login', element: <Login /> },
     { path: '/register', element: <Register /> },
     { path: '/profile', element: <Profile /> },

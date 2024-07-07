@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
+import { useSquareSize } from '../../Hooks/useSquareSize';
 import Piece from '../Piece';
 import PromotionPawn from '../PromotionPawn';
 import { isMoveLegal } from '../../ChessMoves';
@@ -19,12 +20,7 @@ const ChessBoard = () => {
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [highlightedSquare, setHighlightedSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
-  const squareSize = useMemo(() => {
-    const size = getComputedStyle(document.documentElement).getPropertyValue(
-      '--dim-square'
-    );
-    return parseInt(size, 10);
-  }, []);
+  const squareSize = useSquareSize();
 
   let squarePieceDrop = [null, 'empty'];
 

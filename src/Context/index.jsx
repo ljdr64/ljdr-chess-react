@@ -18,6 +18,7 @@ export const ChessBoardProvider = ({ children }) => {
   const [halfmoveNumber, setHalfmoveNumber] = useState(0);
   const [onPromote, setOnPromote] = useState(null);
   const [notation, setNotation] = useState('');
+  const [promotionModal, setPromotionModal] = useState(false);
 
   const board2DArray = FENToBoard2DArray(fen);
 
@@ -152,6 +153,8 @@ export const ChessBoardProvider = ({ children }) => {
         halfmoveNumber,
         setNotation,
         notation,
+        setPromotionModal,
+        promotionModal,
       }}
     >
       {children}

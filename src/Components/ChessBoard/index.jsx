@@ -97,6 +97,12 @@ const ChessBoard = () => {
           )
       );
       context.handlePieceMove(currentSquare, square);
+      if (
+        (draggingPiece === 'P' && square[1] === '8') ||
+        (draggingPiece === 'p' && square[1] === '1')
+      ) {
+        context.setPromotionModal(true);
+      }
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -128,6 +134,12 @@ const ChessBoard = () => {
           )
       );
       context.handlePieceMove(currentSquare, square);
+      if (
+        (draggingPiece === 'P' && square[1] === '8') ||
+        (draggingPiece === 'p' && square[1] === '1')
+      ) {
+        context.setPromotionModal(true);
+      }
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -268,6 +280,12 @@ const ChessBoard = () => {
             console.log(
               `${draggingPiece} ${currentSquare}-${squarePieceDrop[0]} ${context.currentTurn}`
             );
+            if (
+              (draggingPiece === 'P' && squarePieceDrop[0][1] === '8') ||
+              (draggingPiece === 'p' && squarePieceDrop[0][1] === '1')
+            ) {
+              context.setPromotionModal(true);
+            }
             context.setCurrentTurn(
               context.currentTurn === 'white' ? 'black' : 'white'
             );
@@ -371,6 +389,9 @@ const ChessBoard = () => {
 
   return (
     <div className="board-container mx-auto select-none">
+      {context.promotionModal && (
+        <div className="flex absolute dim-board bg-gray-500 opacity-50 z-10"></div>
+      )}
       <div className="flex flex-wrap dim-board cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
@@ -414,12 +435,12 @@ const ChessBoard = () => {
               >
                 {currentSquare === square ? (
                   <>
-                    {isPromotedWhitePawn && piece === 'P' && (
+                    {isPromotedWhitePawn && (
                       <div className="shadow-lg h-auto promote-white z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
-                    {isPromotedBlackPawn && piece === 'p' && (
+                    {isPromotedBlackPawn && (
                       <div className="shadow-lg h-auto promote-black z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
@@ -440,12 +461,12 @@ const ChessBoard = () => {
                   </>
                 ) : (
                   <>
-                    {isPromotedWhitePawn && piece === 'P' && (
+                    {isPromotedWhitePawn && (
                       <div className="shadow-lg h-auto promote-white z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>
                     )}
-                    {isPromotedBlackPawn && piece === 'p' && (
+                    {isPromotedBlackPawn && (
                       <div className="shadow-lg h-auto promote-black z-20">
                         <PromotionPawn piece={piece} square={square} />
                       </div>

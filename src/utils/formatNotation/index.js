@@ -484,8 +484,7 @@ export const formatNotation = (
             board,
             fen
           )}${square}`;
-        }
-        if (fromPiece === 'r') {
+        } else if (fromPiece === 'r') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
             fromPiece,
             square,
@@ -493,8 +492,7 @@ export const formatNotation = (
             board,
             fen
           )}${square}`;
-        }
-        if (fromPiece === 'b') {
+        } else if (fromPiece === 'b') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
             fromPiece,
             square,
@@ -502,8 +500,7 @@ export const formatNotation = (
             board,
             fen
           )}${square}`;
-        }
-        if (fromPiece === 'q') {
+        } else if (fromPiece === 'q') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
             fromPiece,
             square,
@@ -567,8 +564,7 @@ export const formatNotation = (
             board,
             fen
           )}x${square}`;
-        }
-        if (fromPiece === 'r') {
+        } else if (fromPiece === 'r') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkRookConflicts(
             fromPiece,
             square,
@@ -576,8 +572,7 @@ export const formatNotation = (
             board,
             fen
           )}x${square}`;
-        }
-        if (fromPiece === 'b') {
+        } else if (fromPiece === 'b') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkBishopConflicts(
             fromPiece,
             square,
@@ -585,8 +580,7 @@ export const formatNotation = (
             board,
             fen
           )}x${square}`;
-        }
-        if (fromPiece === 'q') {
+        } else if (fromPiece === 'q') {
           newNotation = ` ${fromPiece.toUpperCase()}${checkQueenConflicts(
             fromPiece,
             square,
@@ -641,8 +635,7 @@ export const formatNotation = (
     if (fromPiece === 'K' && fromPosition === 'e1') {
       if (square === 'g1') {
         newNotation = ` ${fullmoveNumber}. 0-0`;
-      }
-      if (square === 'c1') {
+      } else if (square === 'c1') {
         newNotation = ` ${fullmoveNumber}. 0-0-0`;
       }
     }
@@ -650,8 +643,7 @@ export const formatNotation = (
     if (fromPiece === 'k' && fromPosition === 'e8') {
       if (square === 'g8') {
         newNotation = ' 0-0';
-      }
-      if (square === 'c8') {
+      } else if (square === 'c8') {
         newNotation = ' 0-0-0';
       }
     }

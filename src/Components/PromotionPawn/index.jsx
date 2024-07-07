@@ -9,6 +9,7 @@ const PromotionPawn = ({ piece, square }) => {
   const handlePieceClick = (selectedPiece) => {
     context.handlePromote(selectedPiece, square);
     context.setNotation((prev) => prev + '=' + selectedPiece.toUpperCase());
+    context.setPromotionModal(false);
   };
 
   return (

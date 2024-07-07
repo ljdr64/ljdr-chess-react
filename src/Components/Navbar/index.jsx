@@ -54,9 +54,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`flex items-center fixed z-10 top-0 w-full min-w-[360px] py-2 px-8 text-sm font-medium bg-white shadow-md ${
-        isMenuOpen && 'z-30'
-      }`}
+      className={`flex items-center fixed z-30 top-0 w-full min-w-[360px] py-2 px-8 text-sm font-medium bg-white shadow-md ${isMenuOpen}`}
     >
       <div className="lg:hidden justify-between flex items-center w-full lg:w-auto">
         <div className="flex items-center">

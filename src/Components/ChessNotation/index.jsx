@@ -65,14 +65,16 @@ const ChessNotation = () => {
       if (
         (isBlackKingCheck || isWhiteKingCheck) &&
         !context.notation.endsWith('+') &&
-        !context.notation.endsWith('#')
+        !context.notation.endsWith('#') &&
+        !context.promotionModal
       ) {
         newNotation += '+';
       }
       if (
         (isBlackCheckmate || isWhiteCheckmate) &&
         context.notation.endsWith('+') &&
-        !context.notation.endsWith('#')
+        !context.notation.endsWith('#') &&
+        !context.promotionModal
       ) {
         newNotation = newNotation.slice(0, -1) + '#';
       }

@@ -405,9 +405,13 @@ const ChessBoard = () => {
             );
             const isPossibleTake = isPossibleMove && piece !== 'empty';
             const isWhiteInCheck =
-              piece === 'K' && isWhiteKingInCheck(context.board2DArray);
+              piece === 'K' &&
+              isWhiteKingInCheck(context.board2DArray) &&
+              !context.promotionModal;
             const isBlackInCheck =
-              piece === 'k' && isBlackKingInCheck(context.board2DArray);
+              piece === 'k' &&
+              isBlackKingInCheck(context.board2DArray) &&
+              !context.promotionModal;
             const isPromotedWhitePawn = piece === 'P' && rank === 8;
             const isPromotedBlackPawn = piece === 'p' && rank === 1;
             const isDragStartSquare = dragStartSquare === square;

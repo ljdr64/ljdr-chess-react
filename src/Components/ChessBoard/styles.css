@@ -57,3 +57,12 @@
 .chessgame-padding {
   padding: var(--dim-padding);
 }
+
+.notation-padding {
+  padding: calc(var(--dim-padding) * 1.5) var(--dim-padding)
+    calc(var(--dim-padding) * 1.5) var(--dim-padding);
+}
+
+.font-size-clock {
+  font-size: var(--dim-padding);
+}

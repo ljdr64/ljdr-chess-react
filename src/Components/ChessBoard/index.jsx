@@ -114,7 +114,12 @@ const ChessBoard = () => {
       e.preventDefault();
     }
 
-    if (piece === 'empty') return;
+    if (
+      piece === 'empty' ||
+      (context.currentTurn === 'white' && piece === piece.toLowerCase()) ||
+      (context.currentTurn === 'black' && piece === piece.toUpperCase())
+    )
+      return;
 
     if (possibleMoves.some((item) => item === square)) {
       context.setCurrentTurn(

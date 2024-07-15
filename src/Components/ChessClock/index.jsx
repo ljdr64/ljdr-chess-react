@@ -9,10 +9,7 @@ const ChessClock = ({ initialTime, turn }) => {
 
   useEffect(() => {
     const tick = () => {
-      if (
-        (context.fullmoveNumber > 1 || context.currentTurn === 'black') &&
-        !context.notation.endsWith('#')
-      ) {
+      if (context.fullmoveNumber > 1 && !context.notation.endsWith('#')) {
         if (context.currentTurn === 'white') {
           setWhiteTime((prev) => (prev > 0 ? prev - 100 : 0));
         } else {

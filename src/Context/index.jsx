@@ -13,6 +13,7 @@ export const ChessBoardContext = createContext();
 export const ChessBoardProvider = ({ children }) => {
   const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const [fen, setFEN] = useState(initialFEN);
+  const [lastFEN, setLastFEN] = useState('');
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
   const [halfmoveNumber, setHalfmoveNumber] = useState(0);
@@ -26,14 +27,15 @@ export const ChessBoardProvider = ({ children }) => {
     setOnPromote(piece);
     const newFEN = board2DArrayToFEN(
       promotionPieceInBoard2DArray(board2DArray, square, piece),
-      currentTurn === 'white' ? 'black' : 'white',
-      currentTurn === 'white' ? fullmoveNumber : fullmoveNumber - 1,
+      currentTurn,
+      fullmoveNumber,
       0,
       updateCastlingAvailability(fen, square),
       '-'
     );
 
     if (validateFEN(newFEN)) {
+      setLastFEN(fen);
       setFEN(newFEN);
     } else {
       console.error('invalid FEN: ', newFEN);
@@ -130,6 +132,7 @@ export const ChessBoardProvider = ({ children }) => {
     console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
 
     if (validateFEN(newFEN)) {
+      setLastFEN(fen);
       setFEN(newFEN);
     } else {
       console.error('invalid FEN: ', newFEN);
@@ -140,6 +143,7 @@ export const ChessBoardProvider = ({ children }) => {
   return (
     <ChessBoardContext.Provider
       value={{
+        setFEN,
         fen,
         board2DArray,
         handlePieceMove,
@@ -155,6 +159,8 @@ export const ChessBoardProvider = ({ children }) => {
         notation,
         setPromotionModal,
         promotionModal,
+        setLastFEN,
+        lastFEN,
       }}
     >
       {children}

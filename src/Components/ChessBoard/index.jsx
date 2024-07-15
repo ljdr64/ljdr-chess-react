@@ -70,6 +70,7 @@ const ChessBoard = () => {
   }, [isDragging]);
 
   function handleMouseClick(square) {
+    if (draggingPiece === 'empty') return;
     if (
       square !== currentSquare &&
       isMoveLegal(
@@ -80,9 +81,16 @@ const ChessBoard = () => {
         context.fen
       )
     ) {
-      context.setCurrentTurn(
-        context.currentTurn === 'white' ? 'black' : 'white'
-      );
+      if (
+        (draggingPiece === 'P' && square[1] === '8') ||
+        (draggingPiece === 'p' && square[1] === '1')
+      ) {
+        context.setPromotionModal(true);
+      } else {
+        context.setCurrentTurn(
+          context.currentTurn === 'white' ? 'black' : 'white'
+        );
+      }
       context.setNotation(
         (prev) =>
           prev +
@@ -97,12 +105,6 @@ const ChessBoard = () => {
           )
       );
       context.handlePieceMove(currentSquare, square);
-      if (
-        (draggingPiece === 'P' && square[1] === '8') ||
-        (draggingPiece === 'p' && square[1] === '1')
-      ) {
-        context.setPromotionModal(true);
-      }
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -122,9 +124,16 @@ const ChessBoard = () => {
       return;
 
     if (possibleMoves.some((item) => item === square)) {
-      context.setCurrentTurn(
-        context.currentTurn === 'white' ? 'black' : 'white'
-      );
+      if (
+        (draggingPiece === 'P' && square[1] === '8') ||
+        (draggingPiece === 'p' && square[1] === '1')
+      ) {
+        context.setPromotionModal(true);
+      } else {
+        context.setCurrentTurn(
+          context.currentTurn === 'white' ? 'black' : 'white'
+        );
+      }
       context.setNotation(
         (prev) =>
           prev +
@@ -139,12 +148,6 @@ const ChessBoard = () => {
           )
       );
       context.handlePieceMove(currentSquare, square);
-      if (
-        (draggingPiece === 'P' && square[1] === '8') ||
-        (draggingPiece === 'p' && square[1] === '1')
-      ) {
-        context.setPromotionModal(true);
-      }
       setDragStartSquare(null);
       setHighlightedSquare(null);
       setPossibleMoves([]);
@@ -290,10 +293,11 @@ const ChessBoard = () => {
               (draggingPiece === 'p' && squarePieceDrop[0][1] === '1')
             ) {
               context.setPromotionModal(true);
+            } else {
+              context.setCurrentTurn(
+                context.currentTurn === 'white' ? 'black' : 'white'
+              );
             }
-            context.setCurrentTurn(
-              context.currentTurn === 'white' ? 'black' : 'white'
-            );
             context.setNotation(
               (prev) =>
                 prev +

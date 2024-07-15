@@ -8,6 +8,7 @@ const PromotionPawn = ({ piece, square }) => {
 
   const handlePieceClick = (selectedPiece) => {
     context.handlePromote(selectedPiece, square);
+    context.setCurrentTurn(context.currentTurn === 'white' ? 'black' : 'white');
     context.setNotation((prev) => prev + '=' + selectedPiece.toUpperCase());
     context.setPromotionModal(false);
   };

@@ -28,6 +28,11 @@ const ChessClock = ({ initialTime, turn }) => {
   useEffect(() => {
     if (whiteTime === 0 || blackTime === 0) {
       clearInterval(intervalRef.current);
+      context.setIsClockZero(true);
+      if (context.promotionModal) {
+        context.setPromotionModal(false);
+        context.setFEN(context.lastFEN);
+      }
     }
   }, [whiteTime, blackTime]);
 

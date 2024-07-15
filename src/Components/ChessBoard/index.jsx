@@ -141,13 +141,9 @@ const ChessBoard = () => {
       return;
     }
 
-    if (
-      piece === 'empty' ||
-      (context.currentTurn === 'white' && piece === piece.toLowerCase()) ||
-      (context.currentTurn === 'black' && piece === piece.toUpperCase()) ||
-      context.notation.endsWith('#')
-    )
+    if (context.notation.endsWith('#')) {
       return;
+    }
 
     if (possibleMoves.some((item) => item === square)) {
       if (
@@ -189,9 +185,18 @@ const ChessBoard = () => {
       setHighlightedSquare(null);
       setPossibleMoves([]);
       return;
+    } else if (
+      piece === 'empty' ||
+      (context.currentTurn === 'white' && piece === piece.toLowerCase()) ||
+      (context.currentTurn === 'black' && piece === piece.toUpperCase())
+    ) {
+      setDraggingPiece('empty');
+      setDragStartSquare(null);
+      setHighlightedSquare(null);
+      setPossibleMoves([]);
+      return;
     }
 
-    console.log('Promote: ', piece, currentSquare, square);
     if (
       (piece === 'P' && square[1] === '8') ||
       (piece === 'p' && square[1] === '1')
@@ -326,9 +331,6 @@ const ChessBoard = () => {
               context.fen
             )
           ) {
-            console.log(
-              `${draggingPiece} ${currentSquare}-${squarePieceDrop[0]} ${context.currentTurn}`
-            );
             if (
               (draggingPiece === 'P' && squarePieceDrop[0][1] === '8') ||
               (draggingPiece === 'p' && squarePieceDrop[0][1] === '1')
@@ -384,13 +386,6 @@ const ChessBoard = () => {
       squarePieceDrop = [null, 'empty'];
     }
 
-    console.log(
-      'Position: ',
-      position,
-      draggingPiece,
-      currentSquare,
-      squarePieceDrop
-    );
     setIsDragging(false);
   }
 

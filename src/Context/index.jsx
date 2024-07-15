@@ -6,7 +6,6 @@ import {
   promotionPieceInBoard2DArray,
 } from '../utils';
 import { validateFEN } from '../utils/validateFen';
-import { isWhiteKingInCheck, isBlackKingInCheck } from '../KingInCheck';
 
 export const ChessBoardContext = createContext();
 
@@ -42,7 +41,6 @@ export const ChessBoardProvider = ({ children }) => {
     } else {
       console.error('invalid FEN: ', newFEN);
     }
-    console.log(newFEN);
   };
 
   const updateCastlingAvailability = (currentFEN, fromPosition) => {
@@ -130,16 +128,12 @@ export const ChessBoardProvider = ({ children }) => {
       getEnPassantSquare(piece, fromPosition, toPosition)
     );
 
-    console.log('White in check: ', isWhiteKingInCheck(newBoard2DArray));
-    console.log('Black in check: ', isBlackKingInCheck(newBoard2DArray));
-
     if (validateFEN(newFEN)) {
       setLastFEN(fen);
       setFEN(newFEN);
     } else {
       console.error('invalid FEN: ', newFEN);
     }
-    console.log(newFEN);
   };
 
   return (

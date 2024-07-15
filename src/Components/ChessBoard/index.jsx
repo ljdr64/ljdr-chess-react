@@ -144,7 +144,8 @@ const ChessBoard = () => {
     if (
       piece === 'empty' ||
       (context.currentTurn === 'white' && piece === piece.toLowerCase()) ||
-      (context.currentTurn === 'black' && piece === piece.toUpperCase())
+      (context.currentTurn === 'black' && piece === piece.toUpperCase()) ||
+      context.notation.endsWith('#')
     )
       return;
 

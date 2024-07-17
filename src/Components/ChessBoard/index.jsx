@@ -390,17 +390,11 @@ const ChessBoard = () => {
   }
 
   const handleStart = (e, square, piece) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
     const event = e.type === 'mousedown' ? e : e.touches[0];
     handleMouseDown(event, square, piece);
   };
 
   const handleMove = (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
     const event = e.type === 'mousedown' ? e : e.touches[0];
     handleMouseMove(event);
   };
@@ -448,7 +442,7 @@ const ChessBoard = () => {
       {context.promotionModal && (
         <div className="flex absolute dim-board bg-gray-500 opacity-50 z-10"></div>
       )}
-      <div className="flex flex-wrap dim-board cursor-pointer select-none">
+      <div className="flex flex-wrap dim-board touch-none cursor-pointer select-none">
         {context.board2DArray.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
             const file = String.fromCharCode('a'.charCodeAt(0) + colIndex);

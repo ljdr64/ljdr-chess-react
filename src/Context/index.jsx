@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import {
   FENToBoard2DArray,
   board2DArrayToFEN,
@@ -21,6 +21,19 @@ export const ChessBoardProvider = ({ children }) => {
   const [promotionModal, setPromotionModal] = useState(false);
   const [promotionNotation, setPromotionNotation] = useState('');
   const [isClockZero, setIsClockZero] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const detectTouchDevice = () => {
+      const hasTouchScreen =
+        'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        navigator.msMaxTouchPoints > 0;
+      setIsTouchDevice(hasTouchScreen);
+    };
+
+    detectTouchDevice();
+  }, []);
 
   const board2DArray = FENToBoard2DArray(fen);
 
@@ -161,6 +174,8 @@ export const ChessBoardProvider = ({ children }) => {
         lastFEN,
         setIsClockZero,
         isClockZero,
+        setIsTouchDevice,
+        isTouchDevice,
       }}
     >
       {children}

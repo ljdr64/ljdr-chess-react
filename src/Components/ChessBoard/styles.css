@@ -66,3 +66,7 @@
 .font-size-clock {
   font-size: var(--dim-padding);
 }
+
+.touch-none {
+  touch-action: none;
+}

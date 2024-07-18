@@ -27,6 +27,11 @@ const ChessClock = ({ initialTime, turn }) => {
 
   useEffect(() => {
     if (whiteTime === 0 || blackTime === 0) {
+      if (whiteTime === 0) {
+        context.setChessResult('0-1');
+      } else {
+        context.setChessResult('1-0');
+      }
       clearInterval(intervalRef.current);
       context.setIsClockZero(true);
       if (context.promotionModal) {

@@ -22,6 +22,7 @@ export const ChessBoardProvider = ({ children }) => {
   const [promotionNotation, setPromotionNotation] = useState('');
   const [isClockZero, setIsClockZero] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [chessResult, setChessResult] = useState('');
 
   useEffect(() => {
     const detectTouchDevice = () => {
@@ -176,6 +177,8 @@ export const ChessBoardProvider = ({ children }) => {
         isClockZero,
         setIsTouchDevice,
         isTouchDevice,
+        setChessResult,
+        chessResult,
       }}
     >
       {children}

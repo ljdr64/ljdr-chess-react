@@ -17,7 +17,7 @@ function ChessGame() {
     }
   }, [context.notation]);
 
-  const initialTime = 1 * 60 * 1000;
+  const initialTime = 10 * 1000;
 
   return (
     <Layout>
@@ -48,6 +48,7 @@ function ChessGame() {
             className="text-wrap h-[var(--dim-square)] border-b border-x border-gray-600 shadow-lg text-sm bg-white p-2 overflow-y-scroll"
           >
             {cleanedNotation ? cleanedNotation : ' '}
+            {' ' + context.chessResult}
           </pre>
         </div>
       </div>

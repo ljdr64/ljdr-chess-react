@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
 import { isBlackKingInCheck, isWhiteKingInCheck } from '../../KingInCheck';
 import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
+import { isDrawFen } from '../../utils/isDrawFen';
 import '../ChessBoard/styles.css';
 
 const ChessNotation = () => {
@@ -60,7 +61,23 @@ const ChessNotation = () => {
       const isWhiteCheckmate =
         isWhiteKingCheck && possiblesMoves.white.length === 0;
 
+      const isBlackStalemate =
+        !isBlackKingCheck && possiblesMoves.black.length === 0;
+      const isWhiteStalemate =
+        !isWhiteKingCheck && possiblesMoves.white.length === 0;
+
       let newNotation = context.notation;
+
+      if (context.fullmoveNumber > 1) {
+        if (
+          (isWhiteStalemate && context.currentTurn === 'white') ||
+          (isBlackStalemate && context.currentTurn === 'black') ||
+          isDrawFen(context.fen) ||
+          context.halfmoveNumber === 100
+        ) {
+          context.setChessResult('1/2-1/2');
+        }
+      }
 
       if (
         (isBlackKingCheck || isWhiteKingCheck) &&
@@ -94,7 +111,7 @@ const ChessNotation = () => {
     updateNotation();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.board2DArray, context.notation, possiblesMoves]);
+  }, [possiblesMoves]);
 
   return (
     <>

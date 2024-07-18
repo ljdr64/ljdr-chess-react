@@ -141,7 +141,7 @@ const ChessBoard = () => {
       return;
     }
 
-    if (context.notation.endsWith('#')) {
+    if (context.chessResult !== '') {
       return;
     }
 

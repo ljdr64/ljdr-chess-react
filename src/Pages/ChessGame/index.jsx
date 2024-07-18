@@ -17,7 +17,7 @@ function ChessGame() {
     }
   }, [context.notation]);
 
-  const initialTime = 10 * 1000;
+  const initialTime = 1 * 60 * 1000;
 
   return (
     <Layout>

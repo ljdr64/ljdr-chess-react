@@ -19,6 +19,7 @@ const ChessBoard = () => {
   const [currentSquare, setCurrentSquare] = useState(null);
   const [dragStartSquare, setDragStartSquare] = useState(null);
   const [highlightedSquare, setHighlightedSquare] = useState(null);
+  const [highlightedLastMove, setHighlightedLastMove] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
   const squareSize = useSquareSize();
 
@@ -260,10 +261,18 @@ const ChessBoard = () => {
           e.clientX - squarePos[item].posX + window.scrollX >= 0 &&
           e.clientY - squarePos[item].posY + window.scrollY >= 0
         ) {
-          setHighlightedSquare(item);
-          break;
+          if (item === context.lastMove.from || item === context.lastMove.to) {
+            setHighlightedLastMove(item);
+            setHighlightedSquare(null);
+            break;
+          } else {
+            setHighlightedSquare(item);
+            setHighlightedLastMove(null);
+            break;
+          }
         } else {
           setHighlightedSquare(null);
+          setHighlightedLastMove(null);
         }
       }
     }
@@ -408,6 +417,7 @@ const ChessBoard = () => {
   const getSquareClass = (
     isLightSquare,
     isHighlighted,
+    isHighlightedLastMove,
     isDragStartSquare,
     isPossibleMove,
     isPossibleTake,
@@ -421,6 +431,10 @@ const ChessBoard = () => {
 
     if (isLastMoveSquare) {
       baseClass = isLightSquare ? 'bg-blue-300' : 'bg-blue-400';
+    }
+
+    if (isHighlightedLastMove) {
+      return baseClass;
     }
 
     if (isPromotedWhitePawn || isPromotedBlackPawn) {
@@ -457,6 +471,7 @@ const ChessBoard = () => {
             const square = `${file}${rank}`;
             const isLightSquare = (colIndex + rowIndex) % 2 === 0;
             const isHighlighted = highlightedSquare === square;
+            const isHighlightedLastMove = highlightedLastMove === square;
             const isPossibleMove = possibleMoves.some(
               (item) => item === square
             );
@@ -479,6 +494,7 @@ const ChessBoard = () => {
             const squareClass = getSquareClass(
               isLightSquare,
               isHighlighted,
+              isHighlightedLastMove,
               isDragStartSquare,
               isPossibleMove,
               isPossibleTake,

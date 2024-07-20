@@ -79,6 +79,40 @@
   background-color: #f0d9b5;
 }
 
+.bg-circle-in-center {
+  background-image: radial-gradient(
+    circle,
+    rgba(4, 128, 50, 0.8) 25%,
+    transparent 30%
+  );
+}
+
+.bg-circle-check {
+  background-image: radial-gradient(
+    circle,
+    rgba(210, 0, 0, 0.8) 40%,
+    rgba(210, 0, 0, 0.6) 60%,
+    transparent 100%
+  );
+}
+
+.bg-circle-take-piece {
+  background-image: radial-gradient(
+    circle,
+    transparent 75%,
+    rgb(4, 128, 50) 80%
+  );
+}
+
+.bg-circle-promotion-pawn {
+  background-image: radial-gradient(
+    circle,
+    rgba(156, 163, 175, 0.8) 50%,
+    rgba(156, 163, 175, 0.6) 65%,
+    transparent 100%
+  );
+}
+
 .dim-square,
 .dim-piece {
   width: var(--dim-square);

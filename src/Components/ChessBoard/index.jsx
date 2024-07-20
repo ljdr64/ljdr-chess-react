@@ -253,16 +253,18 @@ const ChessBoard = () => {
         posX: squareArea[item].offsetLeft,
         posY: squareArea[item].offsetTop,
       };
-      if (
-        e.clientX - squarePos[item].posX + window.scrollX <= squareSize - 1 &&
-        e.clientY - squarePos[item].posY + window.scrollY <= squareSize - 1 &&
-        e.clientX - squarePos[item].posX + window.scrollX >= 0 &&
-        e.clientY - squarePos[item].posY + window.scrollY >= 0
-      ) {
-        setHighlightedSquare(item);
-        break;
-      } else {
-        setHighlightedSquare(null);
+      if (!context.isTouchDevice) {
+        if (
+          e.clientX - squarePos[item].posX + window.scrollX <= squareSize - 1 &&
+          e.clientY - squarePos[item].posY + window.scrollY <= squareSize - 1 &&
+          e.clientX - squarePos[item].posX + window.scrollX >= 0 &&
+          e.clientY - squarePos[item].posY + window.scrollY >= 0
+        ) {
+          setHighlightedSquare(item);
+          break;
+        } else {
+          setHighlightedSquare(null);
+        }
       }
     }
 
@@ -412,29 +414,34 @@ const ChessBoard = () => {
     isWhiteInCheck,
     isBlackInCheck,
     isPromotedWhitePawn,
-    isPromotedBlackPawn
+    isPromotedBlackPawn,
+    isLastMoveSquare
   ) => {
-    if (isPromotedWhitePawn || isPromotedBlackPawn) {
-      return 'bg-blue-500';
-    } else if ((isWhiteInCheck || isBlackInCheck) && isLightSquare) {
-      return 'light-square bg-circle-check';
-    } else if ((isWhiteInCheck || isBlackInCheck) && !isLightSquare) {
-      return 'dark-square bg-circle-check';
-    } else if (isHighlighted || isDragStartSquare) {
-      return 'bg-green-700';
-    } else if (isPossibleMove && isLightSquare && !isPossibleTake) {
-      return 'light-square bg-circle-in-center hover:bg-green-700';
-    } else if (isPossibleMove && !isLightSquare && !isPossibleTake) {
-      return 'dark-square bg-circle-in-center hover:bg-green-700';
-    } else if (isPossibleTake && isLightSquare) {
-      return 'light-square bg-circle-take-piece hover:bg-green-700';
-    } else if (isPossibleTake && !isLightSquare) {
-      return 'dark-square bg-circle-take-piece hover:bg-green-700';
-    } else if (isLightSquare) {
-      return 'light-square';
-    } else {
-      return 'dark-square';
+    let baseClass = isLightSquare ? 'light-square' : 'dark-square';
+
+    if (isLastMoveSquare) {
+      baseClass = isLightSquare ? 'bg-blue-300' : 'bg-blue-400';
     }
+
+    if (isPromotedWhitePawn || isPromotedBlackPawn) {
+      return `${baseClass} bg-blue-500`;
+    }
+
+    if (isWhiteInCheck || isBlackInCheck) {
+      return `${baseClass} bg-circle-check`;
+    }
+
+    if (isHighlighted || isDragStartSquare) {
+      return `${baseClass} bg-green-700`;
+    }
+
+    if (isPossibleMove) {
+      return `${baseClass} ${
+        isPossibleTake ? 'bg-circle-take-piece' : 'bg-circle-in-center'
+      } ${isLastMoveSquare ? 'hover:bg-none' : 'hover:bg-green-700'}`;
+    }
+
+    return baseClass;
   };
 
   return (
@@ -465,6 +472,9 @@ const ChessBoard = () => {
             const isPromotedWhitePawn = piece === 'P' && rank === 8;
             const isPromotedBlackPawn = piece === 'p' && rank === 1;
             const isDragStartSquare = dragStartSquare === square;
+            const isLastMoveSquare =
+              square === context.lastMove.to ||
+              square === context.lastMove.from;
 
             const squareClass = getSquareClass(
               isLightSquare,
@@ -475,7 +485,8 @@ const ChessBoard = () => {
               isWhiteInCheck,
               isBlackInCheck,
               isPromotedWhitePawn,
-              isPromotedBlackPawn
+              isPromotedBlackPawn,
+              isLastMoveSquare
             );
 
             return (

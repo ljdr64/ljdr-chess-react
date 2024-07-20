@@ -13,6 +13,7 @@ export const ChessBoardProvider = ({ children }) => {
   const initialFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const [fen, setFEN] = useState(initialFEN);
   const [lastFEN, setLastFEN] = useState('');
+  const [lastMove, setLastMove] = useState({ from: '', to: '' });
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
   const [halfmoveNumber, setHalfmoveNumber] = useState(0);
@@ -101,6 +102,8 @@ export const ChessBoardProvider = ({ children }) => {
   };
 
   const handlePieceMove = (fromPosition, toPosition) => {
+    setLastMove({ from: fromPosition, to: toPosition });
+
     const [newBoard2DArray, piece] = updateBoard2DArrayPosition(
       board2DArray,
       fromPosition,
@@ -179,6 +182,8 @@ export const ChessBoardProvider = ({ children }) => {
         isTouchDevice,
         setChessResult,
         chessResult,
+        setLastMove,
+        lastMove,
       }}
     >
       {children}

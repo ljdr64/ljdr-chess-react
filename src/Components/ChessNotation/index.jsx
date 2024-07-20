@@ -70,8 +70,12 @@ const ChessNotation = () => {
 
       if (context.fullmoveNumber > 1) {
         if (
-          (isWhiteStalemate && context.currentTurn === 'white') ||
-          (isBlackStalemate && context.currentTurn === 'black') ||
+          (isWhiteStalemate &&
+            context.currentTurn === 'white' &&
+            !context.promotionModal) ||
+          (isBlackStalemate &&
+            context.currentTurn === 'black' &&
+            !context.promotionModal) ||
           isDrawFen(context.fen) ||
           context.halfmoveNumber === 100
         ) {

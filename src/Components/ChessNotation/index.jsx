@@ -84,16 +84,7 @@ const ChessNotation = () => {
       }
 
       if (
-        (isBlackKingCheck || isWhiteKingCheck) &&
-        !context.notation.endsWith('+') &&
-        !context.notation.endsWith('#') &&
-        !context.promotionModal
-      ) {
-        newNotation += '+';
-      }
-      if (
         (isBlackCheckmate || isWhiteCheckmate) &&
-        context.notation.endsWith('+') &&
         !context.notation.endsWith('#') &&
         !context.promotionModal
       ) {
@@ -102,7 +93,14 @@ const ChessNotation = () => {
         } else if (isWhiteCheckmate) {
           context.setChessResult('0-1');
         }
-        newNotation = newNotation.slice(0, -1) + '#';
+        newNotation += '#';
+      } else if (
+        (isBlackKingCheck || isWhiteKingCheck) &&
+        !context.notation.endsWith('+') &&
+        !context.notation.endsWith('#') &&
+        !context.promotionModal
+      ) {
+        newNotation += '+';
       }
 
       context.setNotation(newNotation);

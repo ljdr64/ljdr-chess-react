@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ChessBoardContext } from '../../Context';
 import { isBlackKingInCheck, isWhiteKingInCheck } from '../../KingInCheck';
 import { calculatePossibleMoves } from '../../utils/calculatePossibleMoves';
@@ -13,7 +13,7 @@ const ChessNotation = () => {
     black: [],
   });
 
-  useEffect(() => {
+  useMemo(() => {
     const updatedPossiblesMoves = { white: [], black: [] };
 
     context.board2DArray.forEach((row, rowIndex) => {
@@ -49,7 +49,7 @@ const ChessNotation = () => {
     setPossiblesMoves(updatedPossiblesMoves);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context.board2DArray, context.fen]);
+  }, [context.fen]);
 
   useEffect(() => {
     const updateNotation = () => {

@@ -14,6 +14,10 @@ export const ChessBoardProvider = ({ children }) => {
   const [fen, setFEN] = useState(initialFEN);
   const [lastFEN, setLastFEN] = useState('');
   const [lastMove, setLastMove] = useState({ from: '', to: '' });
+  const [prevToPromotionMove, setPrevToPromotionMove] = useState({
+    from: '',
+    to: '',
+  });
   const [currentTurn, setCurrentTurn] = useState('white');
   const [fullmoveNumber, setFullmoveNumber] = useState(1);
   const [halfmoveNumber, setHalfmoveNumber] = useState(0);
@@ -110,6 +114,13 @@ export const ChessBoardProvider = ({ children }) => {
       toPosition
     );
 
+    if (
+      (piece === 'P' && toPosition[1] === '8') ||
+      (piece === 'p' && toPosition[1] === '1')
+    ) {
+      setPrevToPromotionMove({ from: lastMove.from, to: lastMove.to });
+    }
+
     let updatedFullmoveNumber = fullmoveNumber;
 
     if (currentTurn === 'black') {
@@ -184,6 +195,8 @@ export const ChessBoardProvider = ({ children }) => {
         chessResult,
         setLastMove,
         lastMove,
+        setPrevToPromotionMove,
+        prevToPromotionMove,
       }}
     >
       {children}

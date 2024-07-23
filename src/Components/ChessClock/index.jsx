@@ -37,6 +37,7 @@ const ChessClock = ({ initialTime, turn }) => {
       if (context.promotionModal) {
         context.setPromotionModal(false);
         context.setFEN(context.lastFEN);
+        context.setLastMove(context.prevToPromotionMove);
       }
     }
   }, [whiteTime, blackTime]);

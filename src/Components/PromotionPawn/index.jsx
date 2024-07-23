@@ -28,6 +28,7 @@ const PromotionPawn = ({ piece, square }) => {
         prev + context.promotionNotation + '=' + selectedPiece.toUpperCase()
     );
     context.setPromotionModal(false);
+    context.setPrevToPromotionMove({ from: '', to: '' });
   };
 
   return (
